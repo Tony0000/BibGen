@@ -17,6 +17,7 @@ public class LoginPanel extends JPanel {
     public LoginPanel(){
 
         setBorder(new TitledBorder("Login"));
+        setMinimumSize(new Dimension(200,100));
         setLayout(new GridBagLayout());
         userLabel = new JLabel("User: ", JLabel.CENTER);
         passLabel = new JLabel("Password: ", JLabel.CENTER);

@@ -13,8 +13,7 @@ public class MainWindow {
     private void prepareGUI(){
         frame = new JFrame("BibGen");
         /** Size and positioning*/
-        frame.setSize(1200,565);
-        frame.setResizable(false);
+        //frame.setSize(1200,565);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setLocation((int)dim.getWidth()>>5, (int)dim.getHeight()>>6);
         /** Handler for window closing */
@@ -25,6 +24,8 @@ public class MainWindow {
         });
         PanelManager panel = new PanelManager();
         panel.addComponentsToPane(frame.getContentPane());
+        frame.pack();
+        frame.setResizable(false);
         frame.setVisible(true);
     }
 
