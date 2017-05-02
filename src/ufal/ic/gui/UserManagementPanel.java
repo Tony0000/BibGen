@@ -9,7 +9,7 @@ import java.util.Vector;
 /**
  * Created by manoel on 02/05/2017.
  */
-public class UserManagmentPanel extends JPanel {
+public class UserManagementPanel extends JPanel {
 
     JPanel leftPane, searchPanel, insertUserPanel;
     protected JButton addButton, updateButton, removeButton;
@@ -18,7 +18,7 @@ public class UserManagmentPanel extends JPanel {
     DefaultTableModel model;
     JTable resultsTable;
     Vector< Vector<String> > data;
-    public UserManagmentPanel() {
+    public UserManagementPanel() {
 
         /** Instantiate variables*/
         userColumns = new Vector<String>();
@@ -33,7 +33,7 @@ public class UserManagmentPanel extends JPanel {
         userColumns.add("Curso");
         userColumns.add("Status");
         userColumns.add("Multa");
-        userColumns.add("Livros Emprestados");
+        userColumns.add("Emprestimos");
 
         /** Instantiate dependent variables*/
         insertUserPanel = new addUserPanel();
@@ -43,7 +43,6 @@ public class UserManagmentPanel extends JPanel {
         searchPanel = new SearchPanel(userColumns);
         leftPane.add(new JScrollPane(resultsTable), BorderLayout.CENTER);
         add(leftPane);
-        add(searchPanel);
 
         /** Instantiate and setting Data Model for the table*/
         model = new DefaultTableModel(userColumns, 40);

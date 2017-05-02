@@ -20,8 +20,8 @@ public class LibrarianPanel extends JPanel{
         JPanel menuPanel;
 
         setLayout(new GridBagLayout());
-        booksTab = new JPanel();
-        usersTab = new UserManagmentPanel();
+        booksTab = new BookManagementPanel();
+        usersTab = new UserManagementPanel();
         reportsTab = new JPanel();
         flowTab = new JPanel(new GridLayout());
         tabs = new JPanel(new CardLayout());
