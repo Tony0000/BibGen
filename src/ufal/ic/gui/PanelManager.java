@@ -26,7 +26,7 @@ public class PanelManager{
             protected void paintComponent(Graphics g){
                 super.paintComponent(g);
                 try {
-                    BufferedImage image = ImageIO.read(new File("res/login.jpg"));
+                    BufferedImage image = ImageIO.read(new File("res/login.png"));
                     w = image.getWidth();
                     h = image.getHeight();
                     g.drawImage(image, 0,0,this);

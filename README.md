@@ -1,5 +1,7 @@
 # BibGen
 
+![BibGen](bibgen.jpg)</br>
+
 ## Description
    BibGen is a acronym of Gerenciador de Bilioteca (Library Management, in english) 
    and it was made using Java, Swing and JDBC (for the persistence of data).
@@ -13,9 +15,10 @@
     
 ## Classes
 * Entities
-    * sub item
-    * sub item 2
+    * Book
+    * Librarian
+    * Constants
 * GUI 
-    * Window
-
-## 
+    * Main Window - JFrame and the main method
+    * Panel Manager - The handler of the Login and Applcation JPanels
+    * Librarian Panel - JPanel which handles all subpanels after the login
