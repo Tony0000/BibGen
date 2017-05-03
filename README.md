@@ -1,6 +1,6 @@
 # BibGen
 
-![BibGen](bibgen.jpg)</br>
+![BibGen](bibgen.png)</br>
 
 ## Description
    BibGen is a acronym of Gerenciador de Bilioteca (Library Management, in english) 
