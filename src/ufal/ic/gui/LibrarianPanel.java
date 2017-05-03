@@ -22,10 +22,9 @@ public class LibrarianPanel extends JPanel{
         setLayout(new GridBagLayout());
         booksTab = new BookManagementPanel();
         usersTab = new UserManagementPanel();
-        reportsTab = new JPanel();
-        flowTab = new JPanel(new GridLayout());
+        reportsTab = new ReportManagementPanel();
+        flowTab = new FlowManagementPanel();
         tabs = new JPanel(new CardLayout());
-        setBackground(Color.LIGHT_GRAY);
 
         tabs.add(usersTab, TAGS[0]);
         tabs.add(booksTab, TAGS[1]);
@@ -105,7 +104,7 @@ public class LibrarianPanel extends JPanel{
 
             add(menuButtons);
             Dimension minSize = new Dimension(200, 90);
-            Dimension prefSize = new Dimension(600, 90);
+            Dimension prefSize = new Dimension(500, 90);
             Dimension maxSize = new Dimension(Short.MAX_VALUE, 90);
             add(new Box.Filler(minSize, prefSize, maxSize));
             add(session[4]);
