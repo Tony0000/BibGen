@@ -1,5 +1,7 @@
 package ufal.ic.gui;
 
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -31,6 +33,11 @@ public class MainWindow {
 
     public static void main(String[] args) {
         javax.swing.SwingUtilities.invokeLater(() -> new MainWindow().prepareGUI());
+
+        EntityManagerFactory factory = Persistence.
+                createEntityManagerFactory("BibGen");
+
+        factory.close();
 
     }
 }
