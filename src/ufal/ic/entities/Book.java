@@ -11,9 +11,7 @@ import java.util.List;
 public class Book {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "id_book")
-    private Long id;
+    private int ISBN;
 
     @Column
     private String title;
@@ -21,13 +19,10 @@ public class Book {
     private List<String> authors;
 
     @Column
-    private String editora;
+    private String publisher;
 
     @Column
-    private String status;
-
-    @Column
-    private int numExemplares;
+    private int samples;
 
     @Column
     private int edition;
@@ -35,8 +30,7 @@ public class Book {
     @Column
     private int year;
 
-    @Column
-    private int ISBN;
+
 
 
     @ManyToMany(mappedBy = "booksList")
@@ -45,25 +39,17 @@ public class Book {
     // Constructor no argumento
     public Book(){}
 
-    //getters and setters
-    public Long getId(){
-        return id;
-    }
-
     public String getTitle(){
         return this.title;
     }
     public List<String> getAuthors(){
         return authors;
     }
-    public String getEditora(){
-        return editora;
+    public String getPublisher(){
+        return publisher;
     }
-    public String getStatus(){
-        return status;
-    }
-    public int getNumExemplares(){
-        return numExemplares;
+    public int getSamples(){
+        return samples;
     }
     public int getEdition(){
         return edition;
@@ -75,24 +61,17 @@ public class Book {
         return ISBN;
     }
 
-
-    public void setId(Long id){
-        this.id = id;
-    }
     public void setTitle(String title){
         this.title = title;
     }
     public void setAuthors(List<String> authors){
         this.authors = authors;
     }
-    public void setEditora(String editora){
-        this.editora = editora;
+    public void setPublisher(String editora){
+        this.publisher = editora;
     }
-    public void setStatus(String status){
-        this.status = status;
-    }
-    public void setNumExemplares(int numExemplares){
-        this.numExemplares = numExemplares;
+    public void setSamples(int numExemplares){
+        this.samples = numExemplares;
     }
     public void setEdition(int edition){
         this.edition = edition;
@@ -104,13 +83,12 @@ public class Book {
         this.ISBN = ISBN;
     }
 
-    public Book(String title, List<String> authors, String editora, String status,
-                int numExemplares, int edition, int year, int ISBN) {
+    public Book(String title, List<String> authors, String publisher,
+                int samples, int edition, int year, int ISBN) {
         this.title = title;
         this.authors = authors;
-        this.editora = editora;
-        this.status = status;
-        this.numExemplares = numExemplares;
+        this.publisher = publisher;
+        this.samples = samples;
         this.edition = edition;
         this.year = year;
         this.ISBN = ISBN;

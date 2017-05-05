@@ -1,50 +1,43 @@
 package ufal.ic.entities;
 
-import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * Created by manoel on 30/04/2017.
  */
-public class Librarian extends Person {
+@Entity
+@Table(name = "LIBRARIAN")
+public class Librarian{
 
-    public String codFunc;
+    @Id
+    public String login;
 
-    public Librarian(String nome, Date dataNascimento, String endereco,
-                     String contato, String email, String codFunc){
-        super(nome, dataNascimento, endereco, contato, email);
-        this.codFunc = codFunc;
+    @Column
+    public String senha;
+
+    public Librarian(String login, String senha){
+        this.login = login;
+        this.senha = senha;
     }
 
-    protected void listarLivros(String titulo){
+    public Librarian(){}
 
+    public String getLogin() {
+        return login;
     }
 
-    protected void listarLivros(int ISBN){
-
+    public void setLogin(String login) {
+        this.login = login;
     }
 
-    public void listarEmprestimos(){
-
+    public String getSenha() {
+        return senha;
     }
 
-    public void listarReservas(){
-
-    }
-
-
-    protected void consultarUsuario(String nome){
-
-    }
-
-    protected void consultarUsuario(int matricula){
-
-    }
-
-    protected void cadastrarLivro(){
-
-    }
-
-    public void reservarLivro(){
-
+    public void setSenha(String senha) {
+        this.senha = senha;
     }
 }

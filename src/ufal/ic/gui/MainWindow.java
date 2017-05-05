@@ -10,7 +10,6 @@ import java.awt.event.WindowEvent;
 public class MainWindow {
 
     private JFrame frame;
-
     /** Prepares the jframe and its main panel*/
     private void prepareGUI(){
         frame = new JFrame("BibGen");
@@ -32,12 +31,10 @@ public class MainWindow {
     }
 
     public static void main(String[] args) {
-        javax.swing.SwingUtilities.invokeLater(() -> new MainWindow().prepareGUI());
-
         EntityManagerFactory factory = Persistence.
                 createEntityManagerFactory("BibGen");
-
         factory.close();
+        javax.swing.SwingUtilities.invokeLater(() -> new MainWindow().prepareGUI());
 
     }
 }

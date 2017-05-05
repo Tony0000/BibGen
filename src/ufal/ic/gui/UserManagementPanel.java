@@ -1,8 +1,13 @@
 package ufal.ic.gui;
 
+import ufal.ic.entities.User;
+import ufal.ic.entities.UserHandler;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Vector;
 
 /**
@@ -10,10 +15,10 @@ import java.util.Vector;
  */
 public class UserManagementPanel extends JPanel {
 
-    JPanel leftPane, searchPanel, registerUserPane;
+    JPanel leftPane, searchPanel;
+    RegisterPanel registerUserPane;
     protected JButton addButton, updateButton, removeButton;
     Vector<String> userColumns;
-    Vector<String> booksColumns;
     DefaultTableModel model;
     JTable resultsTable;
     Vector< Vector<String> > data;
@@ -22,7 +27,6 @@ public class UserManagementPanel extends JPanel {
 
         /** Instantiate variables*/
         userColumns = new Vector<>();
-        booksColumns = new Vector<>();
         data = new Vector<>();
         resultsTable = new JTable();
 
@@ -31,9 +35,6 @@ public class UserManagementPanel extends JPanel {
         userColumns.add("Nome");
         userColumns.add("Email");
         userColumns.add("Curso");
-        userColumns.add("Multa");
-        userColumns.add("Status");
-        userColumns.add("Emprestimos");
 
         /** Instantiate dependent variables*/
         registerUserPane = new RegisterPanel("usuário", userColumns);
@@ -45,17 +46,11 @@ public class UserManagementPanel extends JPanel {
         /** Instantiate and setting Data Model for the table*/
         model = new DefaultTableModel(userColumns, 40);
 
-        /** Sample data for user table*/
-//        Vector<String> row = new Vector<>();
-//        row.addButton("Ana Monteiro");
-//        row.addButton("48 9923-7898");
-//        row.addButton("ana.monteiro@gmail.com");
-//        model.addRow(row);
-
         resultsTable.setModel(model);
         addButton = new JButton("Inserir");
         updateButton = new JButton("Atualizar");
         removeButton = new JButton("Remover");
+        setUpButtons();
         JPanel userHandlerButtons = new JPanel();
         userHandlerButtons.add(addButton);
         userHandlerButtons.add(updateButton);
@@ -72,6 +67,45 @@ public class UserManagementPanel extends JPanel {
         rightPane.setMaximumSize(new Dimension(300,300));
         split.setPreferredSize(new Dimension(1000,500));
         add(split);
+    }
+
+    /** Provides the action each button has to execute once it's clicked. */
+    public void setUpButtons(){
+        addButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("CLIQUEI PARA REGISTRAR");
+                //TODO: query insert into user table
+                User user = registerUserPane.getFields();
+                JOptionPane.showMessageDialog(registerUserPane, user.toString());
+                UserHandler.insert(user);
+
+            }
+        });
+
+        updateButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("CLIQUEI PARA ATUALIZAR");
+                //TODO: query update to user table
+                User user = registerUserPane.getFields();
+                JOptionPane.showMessageDialog(registerUserPane, user.toString());
+                UserHandler.update(user);
+            }
+        });
+
+        removeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("CLIQUEI PARA REMOVER");
+                //TODO: query remove from user table
+                User user = registerUserPane.getFields();
+                JOptionPane.showMessageDialog(registerUserPane, user.toString());
+                UserHandler.remove(user);
+            }
+        });
+
+
     }
 
 }

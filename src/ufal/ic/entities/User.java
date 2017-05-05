@@ -1,7 +1,5 @@
 package ufal.ic.entities;
 
-import org.hibernate.annotations.Cascade;
-
 import javax.persistence.*;
 import java.util.List;
 
@@ -9,21 +7,20 @@ import java.util.List;
  * Created by Maximus on 03/05/2017.
  */
 @Entity
-@Table(name = "usuario")
+@Table(name = "USER")
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
+    private String enrollment;
 
     @Column
     private String name;
 
     @Column
-    private String course;
+    private String email;
 
     @Column
-    private String period;
+    private String course;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "user_book",
@@ -35,30 +32,42 @@ public class User {
     // constructor no argument
     public User(){}
 
-    public User(String name, String course, String period){
+    public User(String enrollment, String name, String email, String course){
+        this.enrollment = enrollment;
         this.name = name;
+        this.email = email;
         this.course = course;
-        this.period = period;
     }
 
 
     public String getName(){
         return name;
     }
+    public String getEmail(){
+        return email;
+    }
     public String getCourse(){
         return course;
-    }
-    public String getPeriod(){
-        return period;
     }
 
     public void setName(String name){
         this.name = name;
     }
-    public void setCourse(String course){
-       this.course = course;
+    public void setEmail(String email){
+       this.email = email;
     }
-    public void setPeriod(String period){
-        this.period = period;
+    public void setCourse(String period){
+        this.course = period;
     }
+
+    public String getEnrollment() {
+        return enrollment;
+    }
+
+    public void setEnrollment(String matricula) {
+        this.enrollment = matricula;
+    }
+
+    @Override
+    public String toString(){return "Name: "+getName()+"\nMatricula: "+getEnrollment()+"\nEmail: "+ getEmail()+"\nPeriodo: "+ getCourse();}
 }

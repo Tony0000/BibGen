@@ -1,5 +1,9 @@
 package ufal.ic.gui;
 
+import ufal.ic.entities.GroupButtonUtil;
+import ufal.ic.entities.HibernateUtil;
+
+import javax.persistence.Query;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
@@ -44,6 +48,14 @@ public class SearchPanel extends JPanel {
         confirm.setAlignmentX(this.CENTER_ALIGNMENT);
         confirm.addActionListener(e -> {
             //TODO: Consultar o banco e efetuar ação correspondente a botao radio selecionado
+            String field = GroupButtonUtil.getSelectedButtonText(buttonGroup);
+            System.out.println(field + " - " + inputText.getText());
+//            String result = Logic.queryBookTable(field, "enrollment", inputText.getText());
+            Query query = HibernateUtil.getSession()
+                .createQuery("select enrollment from User "+
+                        "where name = :paramFinalizado");
+            query.setParameter("paramFinalizado", "Carlos");
+            JOptionPane.showMessageDialog(this, query.getSingleResult().toString());
 
         });
         Dimension minSize = new Dimension(20, 20);
@@ -86,7 +98,11 @@ public class SearchPanel extends JPanel {
         confirm = new JButton("Confirmar");
         confirm.setAlignmentX(this.CENTER_ALIGNMENT);
         confirm.addActionListener(e -> {
+            System.out.println("CLIQUEI NA BUSCA");
             //TODO: Consultar o banco e efetuar ação correspondente a botao radio selecionado
+//            String field = GroupButtonUtil.getSelectedButtonText(buttonGroup);
+//            JOptionPane.showMessageDialog(this, "MENSAGEM");
+
 
         });
         add(radioPanel);

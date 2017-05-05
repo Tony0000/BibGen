@@ -3,6 +3,8 @@ package ufal.ic.gui;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Vector;
 
 /**
@@ -24,12 +26,11 @@ public class BookManagementPanel extends JPanel {
         resultsTable = new JTable();
 
         /** Setting sample headers for user table*/
-        booksColumns.add("Título");
-        booksColumns.add("Autor(es)");
-        booksColumns.add("Editora");
-        booksColumns.add("Edição");
-        booksColumns.add("Status");
-        booksColumns.add("Unidades");
+        booksColumns.add("Title");
+        booksColumns.add("Author");
+        booksColumns.add("Publisher");
+        booksColumns.add("Edition");
+        booksColumns.add("Units");
 
         /** Instantiate dependent variables*/
         registerBookPane = new RegisterPanel("livros", booksColumns);
@@ -61,5 +62,41 @@ public class BookManagementPanel extends JPanel {
         split.setOneTouchExpandable(false);
         split.setEnabled(false);
         add(split);
+    }
+
+    public void setUpButtons() {
+        addButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("CLIQUEI PARA REGISTRAR");
+                //TODO: query insert into book table
+//                User user = registerBookPane.getFields();
+//                JOptionPane.showMessageDialog(registerBookPane, user.toString());
+//                UserHandler.insert(book);
+
+            }
+        });
+
+        updateButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("CLIQUEI PARA ATUALIZAR");
+                //TODO: query update to book table
+//                Book book = registerBookPane.getFields();
+//                JOptionPane.showMessageDialog(registerBookPane, book.toString());
+//                UserHandler.update(book);
+            }
+        });
+
+        removeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("CLIQUEI PARA REMOVER");
+                //TODO: query remove from book table
+//                Book book = registerBookPane.getFields();
+//                JOptionPane.showMessageDialog(registerBookPane, book.toString());
+//                UserHandler.remove(book);
+            }
+        });
     }
 }

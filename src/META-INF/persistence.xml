@@ -11,7 +11,8 @@
 
         <!-- entidade mapeada -->
         <class>ufal.ic.entities.Book</class>
-        <class>ufal.ic.entities.Person</class>
+        <class>ufal.ic.entities.User</class>
+        <class>ufal.ic.entities.Librarian</class>
 
         <properties>
             <!-- dados da conexao -->
