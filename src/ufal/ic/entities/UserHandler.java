@@ -27,7 +27,7 @@ public class UserHandler {
     public static void remove(User user){
         manager = HibernateUtil.getSession();
         manager.getTransaction().begin();
-        manager.remove(user);
+        manager.remove(findBy(user.getEnrollment()));
         manager.getTransaction().commit();
     }
 

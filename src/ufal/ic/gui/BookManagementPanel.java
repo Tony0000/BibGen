@@ -30,10 +30,10 @@ public class BookManagementPanel extends JPanel {
         resultsTable = new JTable();
 
         /** Setting sample headers for user table*/
+        booksColumns.add("ISBN");
         booksColumns.add("Title");
         booksColumns.add("Author");
         booksColumns.add("Publisher");
-        booksColumns.add("Edition");
         booksColumns.add("Units");
 
         /** Instantiate dependent variables*/
@@ -50,6 +50,7 @@ public class BookManagementPanel extends JPanel {
         addButton = new JButton("Insert");
         updateButton = new JButton("Update");
         removeButton = new JButton("Remove");
+        setUpButtons();
         JPanel userHandlerButtons = new JPanel();
         userHandlerButtons.add(addButton);
         userHandlerButtons.add(updateButton);
@@ -190,7 +191,7 @@ public class BookManagementPanel extends JPanel {
                     i++;
                 }
             }
-            return new Book();
+            return new Book(bookFields[0],bookFields[1],bookFields[2],bookFields[3], Integer.valueOf(bookFields[4]));
         }
 
         public void fillMe(Book book){

@@ -63,8 +63,8 @@ public class Book {
         this.isbn = ISBN;
     }
 
-    public Book(String title, String author, String publisher,
-                int samples, String isbn) {
+    public Book(String isbn, String title, String author, String publisher,
+                int samples) {
         this.title = title;
         this.author = author;
         this.publisher = publisher;
@@ -73,7 +73,7 @@ public class Book {
     }
 
     public String[] getInfo(){
-        String[] fields = new String[4];
+        String[] fields = new String[5];
         fields[0] = isbn;
         fields[1] = title;
         fields[2] = author;
@@ -82,4 +82,8 @@ public class Book {
         return fields;
     }
 
+    @Override
+    public String toString(){
+        return "ISBN: "+getIsbn()+"\nTitle: "+getTitle()+"\nAuthor: "+getAuthor()+"\nPublisher"+getPublisher()+"\nSamples: "+getSamples();
+    }
 }

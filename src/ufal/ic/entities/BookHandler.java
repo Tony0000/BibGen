@@ -26,7 +26,7 @@ public class BookHandler {
     public static void remove(Book book){
         manager = HibernateUtil.getSession();
         manager.getTransaction().begin();
-        manager.remove(book);
+        manager.remove(findBy(book.getIsbn()));
         manager.getTransaction().commit();
     }
 
