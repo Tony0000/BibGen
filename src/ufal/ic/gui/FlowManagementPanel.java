@@ -24,12 +24,13 @@ public class FlowManagementPanel extends JPanel{
 
     public FlowManagementPanel(){
         booksColumns = new Vector<>();
-        booksColumns.add("Título");
-        booksColumns.add("Autor(es)");
-        booksColumns.add("Editora");
-        booksColumns.add("Edição");
-        booksColumns.add("Status");
-        booksColumns.add("Unidades");
+        booksColumns.add("ISBN");
+        booksColumns.add("Title");
+        booksColumns.add("Author");
+        booksColumns.add("Publisher");
+        booksColumns.add("Units");
+//        booksColumns.add("Rented at");
+//        booksColumns.add("Due in");
 
         bookInfo = new RegisterPanel(booksColumns);
         searchPane = new SearchPanel(new String[]{"enrollment", "ISBN"});
@@ -38,6 +39,7 @@ public class FlowManagementPanel extends JPanel{
         renewBook = scaleDownImage("forward.png");
         returnBook = scaleDownImage("minus.png");
         scheduleBook = scaleDownImage("schedule.png");
+        setUpButtons();
 
         /** Options menu*/
         menuPane = new JPanel();
@@ -71,6 +73,24 @@ public class FlowManagementPanel extends JPanel{
         majorSplit.setEnabled(false);
         add(majorSplit);
 
+    }
+
+    private void setUpButtons() {
+        rentBook.addActionListener(e->{
+            JOptionPane.showMessageDialog(this, "Quero alugar");
+        });
+
+        renewBook.addActionListener(e->{
+            JOptionPane.showMessageDialog(this, "Quero renovar");
+        });
+
+        returnBook.addActionListener(e->{
+            JOptionPane.showMessageDialog(this, "Quero devolver");
+        });
+
+        scheduleBook.addActionListener(e->{
+            JOptionPane.showMessageDialog(this, "Quero agendar");
+        });
     }
 
     /** Given an input image it will scale it down and set it as an icon for a jbutton
@@ -137,15 +157,21 @@ public class FlowManagementPanel extends JPanel{
             confirm = new JButton("Confirmar");
             confirm.setAlignmentX(this.CENTER_ALIGNMENT);
             confirm.addActionListener(e -> {
-                System.out.println("CLIQUEI NA BUSCA");
-                //TODO: Consultar o banco e efetuar ação correspondente a botao radio selecionado
+
+
                 String field = GroupButtonUtil.getSelectedButtonText(buttonGroup);
+
                 if (field.equals("enrollment")) {
                     User user = UserHandler.findBy(inputText.getText());
+                    JOptionPane.showMessageDialog(this, user.toString());
+                    //TODO: CONSULTE O BANCO E TRAGA OS LIVROS ALUGADOS
+
                 } else if (field.equals("ISBN")) {
                     Book book = BookHandler.findBy(inputText.getText());
+                    ((RegisterPanel)bookInfo).fillMe(book);
+                    JOptionPane.showMessageDialog(this, book.toString());
                 }
-
+                inputText.setText("");
             });
             add(radioPanel);
             add(inputText);
@@ -160,10 +186,12 @@ public class FlowManagementPanel extends JPanel{
             setBorder(new TitledBorder("Rent book: "));
             //Create and populate the panel.
             setLayout(new SpringLayout());
-            for (int i = 0; i < field.size(); i++) {
+            for (int i = 0; i < field.size()-2; i++) {
                 JLabel l = new JLabel(field.get(i), JLabel.TRAILING);
                 add(l);
                 JTextField textField = new JTextField();
+                textField.setPreferredSize(new Dimension(200,30));
+                textField.setMaximumSize(new Dimension(200,30));
                 textField.setEnabled(false);
                 l.setLabelFor(textField);
                 add(textField);
@@ -191,6 +219,20 @@ public class FlowManagementPanel extends JPanel{
                 }
             }
             return new User(userFields[0], userFields[1], userFields[2], userFields[3]);
+        }
+
+        public void fillMe(Book book){
+            String[] bookFields = book.getInfo();
+
+            int i = 0;
+            Component[] components = getComponents();
+            for(Component c : components){
+                if(c instanceof JTextField){
+                    JTextField tmp =((JTextField) c);
+                    tmp.setText(bookFields[i]);
+                    i++;
+                }
+            }
         }
     }
 }
