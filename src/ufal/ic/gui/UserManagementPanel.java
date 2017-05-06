@@ -1,15 +1,15 @@
 package ufal.ic.gui;
 
-import ufal.ic.entities.*;
+import ufal.ic.util.GroupButtonUtil;
+import ufal.ic.util.TableUtil;
+import ufal.ic.entities.User;
+import ufal.ic.entities.UserHandler;
 
-import javax.persistence.Query;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 import java.util.Vector;
 
 /**
@@ -46,7 +46,8 @@ public class UserManagementPanel extends JPanel {
         leftPane.add(new JScrollPane(resultsTable), BorderLayout.CENTER);
 
         /** Instantiate and setting Data Model for the table*/
-        buildTableModel(resultsTable);
+        TableUtil.buildTableModelU(resultsTable, userColumns);
+        TableUtil.resizeColumnWidth(resultsTable);
 
         addButton = new JButton("Insert");
         updateButton = new JButton("Update");
@@ -70,29 +71,6 @@ public class UserManagementPanel extends JPanel {
         add(split);
     }
 
-    public void buildTableModel(JTable table) {
-        Query q = HibernateUtil.getSession().createQuery("from User");
-        List<User> l = q.getResultList();
-
-        // number and names of the columns
-        int columnCount = userColumns.size();
-
-        // data of the table
-        Vector<Vector<Object>> data = new Vector<Vector<Object>>();
-        for(User u : l) {
-            String[] tmp = u.getInfo();
-            Vector<Object> vector = new Vector<Object>();
-            for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
-                vector.add(tmp[columnIndex]);
-            }
-            data.add(vector);
-        }
-
-        DefaultTableModel model = new DefaultTableModel(data, userColumns);
-        table.setModel(model);
-
-    }
-
     /** Provides the action each button has to execute once it's clicked. */
     public void setUpButtons(){
         addButton.addActionListener(new ActionListener() {
@@ -101,7 +79,7 @@ public class UserManagementPanel extends JPanel {
                 User user = registerUserPane.getFields();
                 JOptionPane.showMessageDialog(registerUserPane, user.toString());
                 UserHandler.insert(user);
-                buildTableModel(resultsTable);
+                TableUtil.buildTableModelU(resultsTable, userColumns);
             }
         });
 
@@ -112,7 +90,7 @@ public class UserManagementPanel extends JPanel {
                 User user = registerUserPane.getFields();
                 JOptionPane.showMessageDialog(registerUserPane, user.toString());
                 UserHandler.update(user);
-                buildTableModel(resultsTable);
+                TableUtil.buildTableModelU(resultsTable, userColumns);
             }
         });
 
@@ -122,7 +100,7 @@ public class UserManagementPanel extends JPanel {
                 User user = registerUserPane.getFields();
                 JOptionPane.showMessageDialog(registerUserPane, user.toString());
                 UserHandler.remove(user);
-                buildTableModel(resultsTable);
+                TableUtil.buildTableModelU(resultsTable, userColumns);
             }
         });
     }
@@ -138,7 +116,7 @@ public class UserManagementPanel extends JPanel {
         public SearchPanel(RegisterPanel r, Vector<String> items, int n) {
             /**Variables instantiation*/
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-            setBorder(new TitledBorder("Buscar por: "));
+            setBorder(new TitledBorder("Find by: "));
             setPreferredSize(new Dimension(300, 70));
             setMinimumSize(new Dimension(200, 60));
 
@@ -159,14 +137,16 @@ public class UserManagementPanel extends JPanel {
                 radioPanel.add(radioButtons[i]);
 
             inputText = new JTextField();
+            inputText.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    doSearch();
+                }
+            });
             confirm = new JButton("Confirmar");
             confirm.setAlignmentX(this.CENTER_ALIGNMENT);
             confirm.addActionListener(e -> {
-                String field = GroupButtonUtil.getSelectedButtonText(buttonGroup);
-                System.out.println(field + " - " + inputText.getText());
-                User u = UserHandler.findBy(inputText.getText());
-                registerUserPane.fillMe(u);
-                JOptionPane.showMessageDialog(this, u.toString());
+                doSearch();
             });
 
             Dimension minSize = new Dimension(20, 20);
@@ -178,6 +158,14 @@ public class UserManagementPanel extends JPanel {
             add(new Box.Filler(minSize, prefSize, prefSize));
             add(confirm);
             add(new Box.Filler(maxSize, maxSize, maxSize));
+        }
+
+        private void doSearch() {
+            String field = GroupButtonUtil.getSelectedButtonText(buttonGroup);
+            System.out.println(field + " - " + inputText.getText());
+            User u = UserHandler.findBy(inputText.getText());
+            registerUserPane.fillMe(u);
+            JOptionPane.showMessageDialog(this, u.toString());
         }
     }
 

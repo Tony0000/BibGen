@@ -1,4 +1,4 @@
-package ufal.ic.entities;
+package ufal.ic.util;
 
 /**
  * Created by manoel on 04/05/2017.

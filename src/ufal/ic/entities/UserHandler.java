@@ -1,5 +1,7 @@
 package ufal.ic.entities;
 
+import ufal.ic.util.HibernateUtil;
+
 import javax.persistence.EntityManager;
 
 /**

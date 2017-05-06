@@ -1,13 +1,16 @@
 package ufal.ic.gui;
 
-import ufal.ic.entities.*;
+import ufal.ic.entities.Book;
+import ufal.ic.entities.BookHandler;
+import ufal.ic.util.GroupButtonUtil;
+import ufal.ic.util.TableUtil;
 
-import javax.persistence.Query;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.util.List;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Vector;
 
 /**
@@ -44,7 +47,9 @@ public class BookManagementPanel extends JPanel {
         leftPane.add(new JScrollPane(resultsTable), BorderLayout.CENTER);
 
         /** Instantiate and setting Data Model for the table*/
-        buildTableModel(resultsTable);
+//        resultsTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        TableUtil.buildTableModelB(resultsTable, booksColumns);
+        TableUtil.resizeColumnWidth(resultsTable);
 
         addButton = new JButton("Insert");
         updateButton = new JButton("Update");
@@ -68,29 +73,6 @@ public class BookManagementPanel extends JPanel {
         add(split);
     }
 
-    public void buildTableModel(JTable table) {
-        Query q = HibernateUtil.getSession().createQuery("from Book");
-        List<Book> l = q.getResultList();
-
-        // number and names of the columns
-        int columnCount = booksColumns.size();
-
-        // data of the table
-        Vector<Vector<Object>> data = new Vector<Vector<Object>>();
-        for(Book b : l) {
-            String[] tmp = b.getInfo();
-            Vector<Object> vector = new Vector<Object>();
-            for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
-                vector.add(tmp[columnIndex]);
-            }
-            data.add(vector);
-        }
-
-        DefaultTableModel model = new DefaultTableModel(data, booksColumns);
-        table.setModel(model);
-
-    }
-
     public void setUpButtons(){
         addButton.addActionListener(e -> {
             //TODO: query insert into user table
@@ -98,7 +80,7 @@ public class BookManagementPanel extends JPanel {
             JOptionPane.showMessageDialog(registerBookPane, book.toString());
             BookHandler.insert(book);
             ((DefaultTableModel)resultsTable.getModel()).fireTableDataChanged();
-            buildTableModel(resultsTable);
+            TableUtil.buildTableModelB(resultsTable, booksColumns);
         });
 
         updateButton.addActionListener(e -> {
@@ -106,7 +88,7 @@ public class BookManagementPanel extends JPanel {
             Book book = registerBookPane.getFields();
             JOptionPane.showMessageDialog(registerBookPane, book.toString());
             BookHandler.update(book);
-            buildTableModel(resultsTable);
+            TableUtil.buildTableModelB(resultsTable, booksColumns);
         });
 
         removeButton.addActionListener(e -> {
@@ -114,7 +96,7 @@ public class BookManagementPanel extends JPanel {
             Book book = registerBookPane.getFields();
             JOptionPane.showMessageDialog(registerBookPane, book.toString());
             BookHandler.remove(book);
-            buildTableModel(resultsTable);
+            TableUtil.buildTableModelB(resultsTable, booksColumns);
         });
     }
     private class SearchPanel extends JPanel {
@@ -149,14 +131,16 @@ public class BookManagementPanel extends JPanel {
                 radioPanel.add(radioButtons[i]);
 
             inputText = new JTextField();
+            inputText.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    doSearch();
+                }
+            });
             confirm = new JButton("Confirmar");
             confirm.setAlignmentX(this.CENTER_ALIGNMENT);
             confirm.addActionListener(e -> {
-                String field = GroupButtonUtil.getSelectedButtonText(buttonGroup);
-                System.out.println(field + " - " + inputText.getText());
-                Book b = BookHandler.findBy(inputText.getText());
-                registerBookPane.fillMe(b);
-                JOptionPane.showMessageDialog(this, b.toString());
+                doSearch();
             });
 
             Dimension minSize = new Dimension(20, 20);
@@ -168,6 +152,14 @@ public class BookManagementPanel extends JPanel {
             add(new Box.Filler(minSize, prefSize, prefSize));
             add(confirm);
             add(new Box.Filler(maxSize, maxSize, maxSize));
+        }
+
+        private void doSearch() {
+            String field = GroupButtonUtil.getSelectedButtonText(buttonGroup);
+            System.out.println(field + " - " + inputText.getText());
+            Book b = BookHandler.findBy(inputText.getText());
+            registerBookPane.fillMe(b);
+            JOptionPane.showMessageDialog(this, b.toString());
         }
     }
 

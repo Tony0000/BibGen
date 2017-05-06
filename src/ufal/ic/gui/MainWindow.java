@@ -1,7 +1,5 @@
 package ufal.ic.gui;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -15,7 +13,7 @@ public class MainWindow {
         frame = new JFrame("BibGen");
         /** Size and positioning*/
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        frame.setLocation((int)dim.getWidth()>>5, (int)dim.getHeight()>>6);
+        frame.setLocation((int)dim.getWidth()>>3, (int)dim.getHeight()>>6);
         /** Handler for window closing */
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent event){
@@ -30,9 +28,9 @@ public class MainWindow {
     }
 
     public static void main(String[] args) {
-        EntityManagerFactory factory = Persistence.
-                createEntityManagerFactory("BibGen");
-        factory.close();
+//        EntityManagerFactory factory = Persistence.
+//                createEntityManagerFactory("BibGen");
+//        factory.close();
         javax.swing.SwingUtilities.invokeLater(() -> new MainWindow().prepareGUI());
 
     }

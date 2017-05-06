@@ -1,17 +1,22 @@
 package ufal.ic.gui;
 
-import ufal.ic.entities.*;
+import ufal.ic.entities.Book;
+import ufal.ic.entities.BookHandler;
+import ufal.ic.entities.User;
+import ufal.ic.entities.UserHandler;
+import ufal.ic.util.GroupButtonUtil;
+import ufal.ic.util.TableUtil;
 
 import javax.imageio.ImageIO;
-import javax.persistence.Query;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Vector;
 
 /**
  * Created by manoel on 02/05/2017.
@@ -52,7 +57,9 @@ public class FlowManagementPanel extends JPanel{
         /** Table of books currently rented */
         booksRentedTable = new JTable();
         booksRentedTable.setEnabled(false);
-        buildTableModel(booksRentedTable);
+        TableUtil.buildTableModelF(booksRentedTable, booksColumns);
+        TableUtil.resizeColumnWidth(booksRentedTable);
+
         tablePane = new JPanel();
         tablePane.add(new JScrollPane(booksRentedTable), BorderLayout.CENTER);
 
@@ -72,29 +79,6 @@ public class FlowManagementPanel extends JPanel{
         majorSplit.setOneTouchExpandable(false);
         majorSplit.setEnabled(false);
         add(majorSplit);
-
-    }
-
-    public void buildTableModel(JTable table) {
-        Query q = HibernateUtil.getSession().createQuery("from Book");
-        java.util.List<Book> l = q.getResultList();
-
-        // number and names of the columns
-        int columnCount = booksColumns.size();
-
-        // data of the table
-        Vector<Vector<Object>> data = new Vector<Vector<Object>>();
-        for(Book b : l) {
-            String[] tmp = b.getInfo();
-            Vector<Object> vector = new Vector<Object>();
-            for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
-                vector.add(tmp[columnIndex]);
-            }
-            data.add(vector);
-        }
-
-        DefaultTableModel model = new DefaultTableModel(data, booksColumns);
-        table.setModel(model);
 
     }
 
@@ -176,29 +160,37 @@ public class FlowManagementPanel extends JPanel{
                 radioPanel.add(radioButtons[i]);
 
             inputText = new JTextField();
+            inputText.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    doSearch();
+                }
+            });
             inputText.setMaximumSize(new Dimension(400, 60));
             confirm = new JButton("Confirmar");
             confirm.setAlignmentX(this.CENTER_ALIGNMENT);
             confirm.addActionListener(e -> {
-
-
-                String field = GroupButtonUtil.getSelectedButtonText(buttonGroup);
-
-                if (field.equals("enrollment")) {
-                    User user = UserHandler.findBy(inputText.getText());
-                    JOptionPane.showMessageDialog(this, user.toString());
-                    //TODO: CONSULTE O BANCO E TRAGA OS LIVROS ALUGADOS
-
-                } else if (field.equals("ISBN")) {
-                    Book book = BookHandler.findBy(inputText.getText());
-                    ((RegisterPanel)bookInfo).fillMe(book);
-                    JOptionPane.showMessageDialog(this, book.toString());
-                }
-                inputText.setText("");
+                doSearch();
             });
             add(radioPanel);
             add(inputText);
             add(confirm);
+        }
+
+        private void doSearch() {
+            String field = GroupButtonUtil.getSelectedButtonText(buttonGroup);
+
+            if (field.equals("enrollment")) {
+                User user = UserHandler.findBy(inputText.getText());
+                JOptionPane.showMessageDialog(this, user.toString());
+                //TODO: CONSULTE O BANCO E TRAGA OS LIVROS ALUGADOS
+
+            } else if (field.equals("ISBN")) {
+                Book book = BookHandler.findBy(inputText.getText());
+                ((RegisterPanel)bookInfo).fillMe(book);
+                JOptionPane.showMessageDialog(this, book.toString());
+            }
+            inputText.setText("");
         }
     }
 
