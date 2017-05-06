@@ -1,15 +1,15 @@
 package ufal.ic.gui;
 
-import ufal.ic.entities.GroupButtonUtil;
-import ufal.ic.entities.User;
-import ufal.ic.entities.UserHandler;
+import ufal.ic.entities.*;
 
+import javax.persistence.Query;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -21,7 +21,6 @@ public class UserManagementPanel extends JPanel {
     RegisterPanel registerUserPane;
     protected JButton addButton, updateButton, removeButton;
     Vector<String> userColumns;
-    DefaultTableModel model;
     JTable resultsTable;
     Vector< Vector<String> > data;
 
@@ -31,6 +30,7 @@ public class UserManagementPanel extends JPanel {
         userColumns = new Vector<>();
         data = new Vector<>();
         resultsTable = new JTable();
+        resultsTable.setEnabled(false);
 
         /** Setting sample headers for user table*/
         userColumns.add("Enrollment");
@@ -46,9 +46,8 @@ public class UserManagementPanel extends JPanel {
         leftPane.add(new JScrollPane(resultsTable), BorderLayout.CENTER);
 
         /** Instantiate and setting Data Model for the table*/
-        model = new DefaultTableModel(userColumns, 40);
+        buildTableModel(resultsTable);
 
-        resultsTable.setModel(model);
         addButton = new JButton("Insert");
         updateButton = new JButton("Update");
         removeButton = new JButton("Remove");
@@ -71,6 +70,29 @@ public class UserManagementPanel extends JPanel {
         add(split);
     }
 
+    public void buildTableModel(JTable table) {
+        Query q = HibernateUtil.getSession().createQuery("from User");
+        List<User> l = q.getResultList();
+
+        // number and names of the columns
+        int columnCount = userColumns.size();
+
+        // data of the table
+        Vector<Vector<Object>> data = new Vector<Vector<Object>>();
+        for(User u : l) {
+            String[] tmp = u.getInfo();
+            Vector<Object> vector = new Vector<Object>();
+            for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
+                vector.add(tmp[columnIndex]);
+            }
+            data.add(vector);
+        }
+
+        DefaultTableModel model = new DefaultTableModel(data, userColumns);
+        table.setModel(model);
+
+    }
+
     /** Provides the action each button has to execute once it's clicked. */
     public void setUpButtons(){
         addButton.addActionListener(new ActionListener() {
@@ -79,7 +101,7 @@ public class UserManagementPanel extends JPanel {
                 User user = registerUserPane.getFields();
                 JOptionPane.showMessageDialog(registerUserPane, user.toString());
                 UserHandler.insert(user);
-
+                buildTableModel(resultsTable);
             }
         });
 
@@ -90,6 +112,7 @@ public class UserManagementPanel extends JPanel {
                 User user = registerUserPane.getFields();
                 JOptionPane.showMessageDialog(registerUserPane, user.toString());
                 UserHandler.update(user);
+                buildTableModel(resultsTable);
             }
         });
 
@@ -99,6 +122,7 @@ public class UserManagementPanel extends JPanel {
                 User user = registerUserPane.getFields();
                 JOptionPane.showMessageDialog(registerUserPane, user.toString());
                 UserHandler.remove(user);
+                buildTableModel(resultsTable);
             }
         });
     }

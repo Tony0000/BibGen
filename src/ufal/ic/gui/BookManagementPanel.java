@@ -2,12 +2,12 @@ package ufal.ic.gui;
 
 import ufal.ic.entities.*;
 
+import javax.persistence.Query;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -18,7 +18,6 @@ public class BookManagementPanel extends JPanel {
     RegisterPanel registerBookPane;
     protected JButton addButton, updateButton, removeButton;
     Vector<String> booksColumns;
-    DefaultTableModel model;
     JTable resultsTable;
     Vector<Vector<String>> data;
 
@@ -28,6 +27,7 @@ public class BookManagementPanel extends JPanel {
         booksColumns = new Vector<>();
         data = new Vector<>();
         resultsTable = new JTable();
+        resultsTable.setEnabled(false);
 
         /** Setting sample headers for user table*/
         booksColumns.add("ISBN");
@@ -44,9 +44,8 @@ public class BookManagementPanel extends JPanel {
         leftPane.add(new JScrollPane(resultsTable), BorderLayout.CENTER);
 
         /** Instantiate and setting Data Model for the table*/
-        model = new DefaultTableModel(booksColumns, 40);
+        buildTableModel(resultsTable);
 
-        resultsTable.setModel(model);
         addButton = new JButton("Insert");
         updateButton = new JButton("Update");
         removeButton = new JButton("Remove");
@@ -69,36 +68,53 @@ public class BookManagementPanel extends JPanel {
         add(split);
     }
 
+    public void buildTableModel(JTable table) {
+        Query q = HibernateUtil.getSession().createQuery("from Book");
+        List<Book> l = q.getResultList();
+
+        // number and names of the columns
+        int columnCount = booksColumns.size();
+
+        // data of the table
+        Vector<Vector<Object>> data = new Vector<Vector<Object>>();
+        for(Book b : l) {
+            String[] tmp = b.getInfo();
+            Vector<Object> vector = new Vector<Object>();
+            for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
+                vector.add(tmp[columnIndex]);
+            }
+            data.add(vector);
+        }
+
+        DefaultTableModel model = new DefaultTableModel(data, booksColumns);
+        table.setModel(model);
+
+    }
+
     public void setUpButtons(){
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //TODO: query insert into user table
-                Book book = registerBookPane.getFields();
-                JOptionPane.showMessageDialog(registerBookPane, book.toString());
-                BookHandler.insert(book);
-
-            }
+        addButton.addActionListener(e -> {
+            //TODO: query insert into user table
+            Book book = registerBookPane.getFields();
+            JOptionPane.showMessageDialog(registerBookPane, book.toString());
+            BookHandler.insert(book);
+            ((DefaultTableModel)resultsTable.getModel()).fireTableDataChanged();
+            buildTableModel(resultsTable);
         });
 
-        updateButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //TODO: query update to user table
-                Book book = registerBookPane.getFields();
-                JOptionPane.showMessageDialog(registerBookPane, book.toString());
-                BookHandler.update(book);
-            }
+        updateButton.addActionListener(e -> {
+            //TODO: query update to user table
+            Book book = registerBookPane.getFields();
+            JOptionPane.showMessageDialog(registerBookPane, book.toString());
+            BookHandler.update(book);
+            buildTableModel(resultsTable);
         });
 
-        removeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //TODO: query remove from user table
-                Book book = registerBookPane.getFields();
-                JOptionPane.showMessageDialog(registerBookPane, book.toString());
-                BookHandler.remove(book);
-            }
+        removeButton.addActionListener(e -> {
+            //TODO: query remove from user table
+            Book book = registerBookPane.getFields();
+            JOptionPane.showMessageDialog(registerBookPane, book.toString());
+            BookHandler.remove(book);
+            buildTableModel(resultsTable);
         });
     }
     private class SearchPanel extends JPanel {

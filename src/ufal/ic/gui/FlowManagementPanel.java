@@ -3,6 +3,7 @@ package ufal.ic.gui;
 import ufal.ic.entities.*;
 
 import javax.imageio.ImageIO;
+import javax.persistence.Query;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
@@ -10,7 +11,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * Created by manoel on 02/05/2017.
@@ -18,7 +19,6 @@ import java.util.Vector;
 public class FlowManagementPanel extends JPanel{
     JButton rentBook, renewBook, returnBook, scheduleBook;
     JPanel menuPane, searchPane, tablePane, bookInfo;
-    DefaultTableModel model;
     JTable booksRentedTable;
     Vector<String> booksColumns;
 
@@ -50,9 +50,9 @@ public class FlowManagementPanel extends JPanel{
         menuPane.add(scheduleBook);
 
         /** Table of books currently rented */
-        model = new DefaultTableModel(booksColumns,10);
         booksRentedTable = new JTable();
-        booksRentedTable.setModel(model);
+        booksRentedTable.setEnabled(false);
+        buildTableModel(booksRentedTable);
         tablePane = new JPanel();
         tablePane.add(new JScrollPane(booksRentedTable), BorderLayout.CENTER);
 
@@ -72,6 +72,29 @@ public class FlowManagementPanel extends JPanel{
         majorSplit.setOneTouchExpandable(false);
         majorSplit.setEnabled(false);
         add(majorSplit);
+
+    }
+
+    public void buildTableModel(JTable table) {
+        Query q = HibernateUtil.getSession().createQuery("from Book");
+        java.util.List<Book> l = q.getResultList();
+
+        // number and names of the columns
+        int columnCount = booksColumns.size();
+
+        // data of the table
+        Vector<Vector<Object>> data = new Vector<Vector<Object>>();
+        for(Book b : l) {
+            String[] tmp = b.getInfo();
+            Vector<Object> vector = new Vector<Object>();
+            for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
+                vector.add(tmp[columnIndex]);
+            }
+            data.add(vector);
+        }
+
+        DefaultTableModel model = new DefaultTableModel(data, booksColumns);
+        table.setModel(model);
 
     }
 
@@ -186,7 +209,7 @@ public class FlowManagementPanel extends JPanel{
             setBorder(new TitledBorder("Rent book: "));
             //Create and populate the panel.
             setLayout(new SpringLayout());
-            for (int i = 0; i < field.size()-2; i++) {
+            for (int i = 0; i < field.size(); i++) {
                 JLabel l = new JLabel(field.get(i), JLabel.TRAILING);
                 add(l);
                 JTextField textField = new JTextField();
