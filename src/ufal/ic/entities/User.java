@@ -70,4 +70,13 @@ public class User {
 
     @Override
     public String toString(){return "Name: "+getName()+"\nMatricula: "+getEnrollment()+"\nEmail: "+ getEmail()+"\nPeriodo: "+ getCourse();}
+
+    public String[] getInfo(){
+        String[] fields = new String[4];
+        fields[0] = enrollment;
+        fields[1] = name;
+        fields[2] = email;
+        fields[3] = course;
+        return fields;
+    }
 }

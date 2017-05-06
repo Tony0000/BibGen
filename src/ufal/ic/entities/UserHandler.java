@@ -31,9 +31,9 @@ public class UserHandler {
         manager.getTransaction().commit();
     }
 
-    <T> T findBy(Class<T> c, String field){
+    public static User findBy(String field){
         manager = HibernateUtil.getSession();
-        return manager.find(c, field);
+        return manager.find(User.class, field);
     }
 
 }

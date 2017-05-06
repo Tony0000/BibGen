@@ -1,5 +1,8 @@
 package ufal.ic.gui;
 
+import ufal.ic.entities.Librarian;
+import ufal.ic.entities.LibrarianHandler;
+
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
@@ -10,7 +13,8 @@ import java.awt.*;
 public class LoginPanel extends JPanel {
 
     private JLabel userLabel, passLabel;
-    private JTextField userInput, passInput;
+    private JTextField userInput;
+    private JPasswordField passInput;
     private JButton loginButton;
     private JPanel reference;
 
@@ -23,18 +27,35 @@ public class LoginPanel extends JPanel {
         userLabel = new JLabel("User: ", JLabel.CENTER);
         passLabel = new JLabel("Password: ", JLabel.CENTER);
         userInput = new JTextField();
-        passInput = new JTextField();
+        passInput = new JPasswordField();
         userInput.setColumns(20);
         passInput.setColumns(20);
+        passInput.setEchoChar('*');
         loginButton = new JButton("Login");
         loginButton.addActionListener(e -> {
-            userInput.setText("");
-            passInput.setText("");
+
             //Hibernate checks if there's an entry like the user in the database
             //If there is not then show a warning
             //JOptionPane.showMessageDialog(this, "Incorrect User or Password");
-            CardLayout cl = (CardLayout) reference.getLayout();
-            cl.show(reference, PanelManager.MAINSCREEN);
+            if(!userInput.getText().isEmpty() && passInput.getPassword().length > 0){
+                Librarian login = LibrarianHandler.findBy(userInput.getText());
+                if(login != null) {
+                    System.out.println(passInput.getPassword());
+                    if (login.getSenha().equals(passInput.getText())) {
+                        CardLayout cl = (CardLayout) reference.getLayout();
+                        cl.show(reference, PanelManager.MAINSCREEN);
+                    }else{
+                        JOptionPane.showMessageDialog(this, "Usuario ou Senha incorreta.");
+                    }
+                }else{
+                    JOptionPane.showMessageDialog(this, "Usuario ou Senha incorreta.");
+                }
+            }else{
+                JOptionPane.showMessageDialog(this, "Preencha os campos usuario e senha");
+            }
+
+            userInput.setText("");
+            passInput.setText("");
         });
         addComponentsToPane();
     }

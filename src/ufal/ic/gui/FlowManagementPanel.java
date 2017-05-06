@@ -1,7 +1,10 @@
 package ufal.ic.gui;
 
+import ufal.ic.entities.*;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -14,7 +17,7 @@ import java.util.Vector;
  */
 public class FlowManagementPanel extends JPanel{
     JButton rentBook, renewBook, returnBook, scheduleBook;
-    JPanel menuPane, searchPane, tablePane;
+    JPanel menuPane, searchPane, tablePane, bookInfo;
     DefaultTableModel model;
     JTable booksRentedTable;
     Vector<String> booksColumns;
@@ -28,7 +31,8 @@ public class FlowManagementPanel extends JPanel{
         booksColumns.add("Status");
         booksColumns.add("Unidades");
 
-        searchPane = new SearchPanel(new String[]{"matricula", "ISBN"});
+        bookInfo = new RegisterPanel(booksColumns);
+        searchPane = new SearchPanel(new String[]{"enrollment", "ISBN"});
         /** Buttons for the options menu*/
         rentBook = scaleDownImage("plus.png");
         renewBook = scaleDownImage("forward.png");
@@ -58,7 +62,6 @@ public class FlowManagementPanel extends JPanel{
         upperPane.add(new Box.Filler(prefSize, prefSize, prefSize));
         upperPane.add(menuPane);
 
-        JPanel bookInfo = new RegisterPanel(booksColumns);
         JSplitPane bottomSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tablePane, bookInfo);
         bottomSplit.setOneTouchExpandable(false);
         bottomSplit.setEnabled(false);
@@ -95,5 +98,99 @@ public class FlowManagementPanel extends JPanel{
             e.printStackTrace();
         }
         return null;
+    }
+
+    private class SearchPanel extends JPanel {
+
+        private JRadioButton[] radioButtons;
+        private JTextField inputText;
+        private ButtonGroup buttonGroup;
+        private JPanel radioPanel;
+        private JButton confirm;
+
+        SearchPanel(String[] item) {
+            /**Variables instantiation*/
+            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+            setBorder(new TitledBorder("Find by:"));
+
+            setPreferredSize(new Dimension(300, 100));
+            setMinimumSize(new Dimension(200, 60));
+
+            radioPanel = new JPanel(new GridLayout(1, 3));
+            radioButtons = new JRadioButton[3];
+            buttonGroup = new ButtonGroup();
+
+            /** Selectable options for search bar and set the one selected by default. Then group and addButton them to the panel.*/
+            for (int i = 0; i < item.length; i++) {
+                radioButtons[i] = new JRadioButton(item[i]);
+            }
+            radioButtons[0].setSelected(true);
+
+            for (int i = 0; i < item.length; i++)
+                buttonGroup.add(radioButtons[i]);
+
+            for (int i = 0; i < item.length; i++)
+                radioPanel.add(radioButtons[i]);
+
+            inputText = new JTextField();
+            inputText.setMaximumSize(new Dimension(400, 60));
+            confirm = new JButton("Confirmar");
+            confirm.setAlignmentX(this.CENTER_ALIGNMENT);
+            confirm.addActionListener(e -> {
+                System.out.println("CLIQUEI NA BUSCA");
+                //TODO: Consultar o banco e efetuar ação correspondente a botao radio selecionado
+                String field = GroupButtonUtil.getSelectedButtonText(buttonGroup);
+                if (field.equals("enrollment")) {
+                    User user = UserHandler.findBy(inputText.getText());
+                } else if (field.equals("ISBN")) {
+                    Book book = BookHandler.findBy(inputText.getText());
+                }
+
+            });
+            add(radioPanel);
+            add(inputText);
+            add(confirm);
+        }
+    }
+
+    private class RegisterPanel extends JPanel {
+
+        public RegisterPanel(Vector<String> field) {
+
+            setBorder(new TitledBorder("Rent book: "));
+            //Create and populate the panel.
+            setLayout(new SpringLayout());
+            for (int i = 0; i < field.size(); i++) {
+                JLabel l = new JLabel(field.get(i), JLabel.TRAILING);
+                add(l);
+                JTextField textField = new JTextField();
+                textField.setEnabled(false);
+                l.setLabelFor(textField);
+                add(textField);
+            }
+
+            SpringUtilities.makeCompactGrid(this,
+                    field.size(), 2, //rows, cols
+                    4, 4,        //initX, initY
+                    4, 4);       //xPad, yPad
+        }
+
+
+        public User getFields() {
+            String[] userFields = new String[5];
+            int i = 0;
+            Component[] components = getComponents();
+            for (Component c : components) {
+                if (c instanceof JTextField) {
+                    JTextField tmp = ((JTextField) c);
+                    if (tmp.getText() == null)
+                        return null;
+                    userFields[i] = tmp.getText();
+                    tmp.setText("");
+                    i++;
+                }
+            }
+            return new User(userFields[0], userFields[1], userFields[2], userFields[3]);
+        }
     }
 }

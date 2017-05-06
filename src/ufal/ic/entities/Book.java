@@ -11,27 +11,19 @@ import java.util.List;
 public class Book {
 
     @Id
-    private int ISBN;
+    private String isbn;
 
     @Column
     private String title;
-    @ElementCollection(targetClass=String.class)
-    private List<String> authors;
+
+    @Column
+    private String author;
 
     @Column
     private String publisher;
 
     @Column
     private int samples;
-
-    @Column
-    private int edition;
-
-    @Column
-    private int year;
-
-
-
 
     @ManyToMany(mappedBy = "booksList")
     private List<User> listUsers;
@@ -42,8 +34,8 @@ public class Book {
     public String getTitle(){
         return this.title;
     }
-    public List<String> getAuthors(){
-        return authors;
+    public String getAuthor(){
+        return author;
     }
     public String getPublisher(){
         return publisher;
@@ -51,47 +43,43 @@ public class Book {
     public int getSamples(){
         return samples;
     }
-    public int getEdition(){
-        return edition;
-    }
-    public int getYear(){
-        return year;
-    }
-    public int getISBN(){
-        return ISBN;
+    public String getIsbn(){
+        return isbn;
     }
 
     public void setTitle(String title){
         this.title = title;
     }
-    public void setAuthors(List<String> authors){
-        this.authors = authors;
+    public void setAuthor(String author){
+        this.author = author;
     }
     public void setPublisher(String editora){
         this.publisher = editora;
     }
-    public void setSamples(int numExemplares){
-        this.samples = numExemplares;
+    public void setSamples(int samples){
+        this.samples = samples;
     }
-    public void setEdition(int edition){
-        this.edition = edition;
-    }
-    public void setYear(int year){
-        this.year = year;
-    }
-    public void setISBN(int ISBN){
-        this.ISBN = ISBN;
+    public void setIsbn(String ISBN){
+        this.isbn = ISBN;
     }
 
-    public Book(String title, List<String> authors, String publisher,
-                int samples, int edition, int year, int ISBN) {
+    public Book(String title, String author, String publisher,
+                int samples, String isbn) {
         this.title = title;
-        this.authors = authors;
+        this.author = author;
         this.publisher = publisher;
         this.samples = samples;
-        this.edition = edition;
-        this.year = year;
-        this.ISBN = ISBN;
+        this.isbn = isbn;
+    }
+
+    public String[] getInfo(){
+        String[] fields = new String[4];
+        fields[0] = isbn;
+        fields[1] = title;
+        fields[2] = author;
+        fields[3] = publisher;
+        fields[4] = String.valueOf(samples);
+        return fields;
     }
 
 }
