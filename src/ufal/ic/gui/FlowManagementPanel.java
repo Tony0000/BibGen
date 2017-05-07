@@ -1,13 +1,13 @@
 package ufal.ic.gui;
 
-import ufal.ic.entities.Book;
-import ufal.ic.entities.BookHandler;
-import ufal.ic.entities.User;
-import ufal.ic.entities.UserHandler;
+import ufal.ic.entities.*;
 import ufal.ic.util.GroupButtonUtil;
+import ufal.ic.util.HibernateUtil;
 import ufal.ic.util.TableUtil;
 
 import javax.imageio.ImageIO;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
@@ -16,6 +16,10 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Vector;
 
 /**
@@ -26,6 +30,8 @@ public class FlowManagementPanel extends JPanel{
     JPanel menuPane, searchPane, tablePane, bookInfo;
     JTable booksRentedTable;
     Vector<String> booksColumns;
+    User user;
+    Book book;
 
     public FlowManagementPanel(){
         booksColumns = new Vector<>();
@@ -34,8 +40,8 @@ public class FlowManagementPanel extends JPanel{
         booksColumns.add("Author");
         booksColumns.add("Publisher");
         booksColumns.add("Units");
-//        booksColumns.add("Rented at");
-//        booksColumns.add("Due in");
+      //  booksColumns.add("Rented at");
+      //  booksColumns.add("Due in");
 
         bookInfo = new RegisterPanel(booksColumns);
         searchPane = new SearchPanel(new String[]{"enrollment", "ISBN"});
@@ -57,7 +63,7 @@ public class FlowManagementPanel extends JPanel{
         /** Table of books currently rented */
         booksRentedTable = new JTable();
         booksRentedTable.setEnabled(false);
-        TableUtil.buildTableModelF(booksRentedTable, booksColumns);
+        //TableUtil.buildTableModelF(booksRentedTable, booksColumns);
         TableUtil.resizeColumnWidth(booksRentedTable);
 
         tablePane = new JPanel();
@@ -84,7 +90,51 @@ public class FlowManagementPanel extends JPanel{
 
     private void setUpButtons() {
         rentBook.addActionListener(e->{
-            JOptionPane.showMessageDialog(this, "Quero alugar");
+            if(user != null && book != null){
+                EntityManager em = HibernateUtil.getSession();
+                // Checa se há livro disponivel
+                if(book.getSamples() > 0) {
+                    // Decrementa a quantidade de livros disponveis
+                    book.setSamples(book.getSamples() - 1);
+
+                    // Atribui a relacao de usuario e livro
+                    UsersBook ub = new UsersBook();
+                    ub.setUser(user);
+                    ub.setBook(book);
+
+                    // Atualiza data de locacao e entrega
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy");
+                    String date = sdf.format(new Date());
+
+                    Date dt = null;
+                    try {
+                        dt = sdf.parse(date);
+                    } catch (ParseException e1) {
+                        e1.printStackTrace();
+                    }
+
+                    ub.setDataLocacao(dt);
+                    Calendar c = Calendar.getInstance();
+                    c.setTime(dt);
+                    c.add(Calendar.DATE, 15);
+                    dt = c.getTime();
+                    ub.setDataEntrega(dt);
+
+                    // Finaliza a transacao salvando no banco
+                    em.getTransaction().begin();
+                    em.persist(ub);
+                    em.persist(book);
+                    em.getTransaction().commit();
+
+                }else{
+                    JOptionPane.showMessageDialog(this, "Não há livros disponíveis");
+                }
+
+
+            } else{
+                JOptionPane.showMessageDialog(this, "Selecione o usuário e o livro");
+            }
+
         });
 
         renewBook.addActionListener(e->{
@@ -181,12 +231,14 @@ public class FlowManagementPanel extends JPanel{
             String field = GroupButtonUtil.getSelectedButtonText(buttonGroup);
 
             if (field.equals("enrollment")) {
-                User user = UserHandler.findBy(inputText.getText());
+                user = UserHandler.findBy(inputText.getText());
                 JOptionPane.showMessageDialog(this, user.toString());
                 //TODO: CONSULTE O BANCO E TRAGA OS LIVROS ALUGADOS
+                Vector<String> booksRentedColumns = booksColumns;
+                TableUtil.buildTableModelF(booksRentedTable, booksColumns, user);
 
             } else if (field.equals("ISBN")) {
-                Book book = BookHandler.findBy(inputText.getText());
+                book = BookHandler.findBy(inputText.getText());
                 ((RegisterPanel)bookInfo).fillMe(book);
                 JOptionPane.showMessageDialog(this, book.toString());
             }

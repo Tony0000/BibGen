@@ -22,12 +22,18 @@ public class User {
     @Column
     private String course;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+   /* @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "user_book",
             joinColumns = @JoinColumn(name = "id_user"),
             inverseJoinColumns = @JoinColumn(name = "id_book")
     )
-    private List<Book> booksList;
+    private List<Book> booksList;*/
+
+
+    @OneToMany(mappedBy = "user")
+    private List<UsersBook> usersBooks;
+
+
 
     // constructor no argument
     public User(){}
@@ -67,6 +73,10 @@ public class User {
     public void setEnrollment(String matricula) {
         this.enrollment = matricula;
     }
+
+    public List<UsersBook> getUsersBooks() { return usersBooks;   }
+
+    public void setUsersBooks(List<UsersBook> usersBooks) { this.usersBooks = usersBooks; }
 
     @Override
     public String toString(){return "Name: "+getName()+"\nMatricula: "+getEnrollment()+"\nEmail: "+ getEmail()+"\nPeriodo: "+ getCourse();}

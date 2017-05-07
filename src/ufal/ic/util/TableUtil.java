@@ -2,7 +2,9 @@ package ufal.ic.util;
 
 import ufal.ic.entities.Book;
 import ufal.ic.entities.User;
+import ufal.ic.entities.UsersBook;
 
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -61,22 +63,26 @@ public class TableUtil {
         table.setModel(model);
     }
 
-    public static void buildTableModelF(JTable table, Vector<String> columnNames) {
-
-        Query q = HibernateUtil.getSession().createQuery("from Book");
-        List<Book> l = q.getResultList();
+    public static void buildTableModelF(JTable table, Vector<String> columnNames, User user) {
+        EntityManager EM = HibernateUtil.getSession();
+        Query q = EM.createQuery(
+                "FROM UsersBook WHERE user_id = :user_id")
+                .setParameter("user_id", user.getEnrollment());
+        List<UsersBook> listBooks = q.getResultList();
 
         // number and names of the columns
         int columnCount = columnNames.size();
 
         // data of the table
         Vector<Vector<Object>> data = new Vector<Vector<Object>>();
-        for(Book b : l) {
-            String[] tmp = b.getInfo();
+        for(UsersBook usersBook : listBooks) {
+            String[] tmp = usersBook.getBook().getInfo();
             Vector<Object> vector = new Vector<Object>();
             for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
                 vector.add(tmp[columnIndex]);
             }
+            //vector.add(usersBook.getDataLocacao());
+            //vector.add(usersBook.getDataEntrega());
             data.add(vector);
         }
 
