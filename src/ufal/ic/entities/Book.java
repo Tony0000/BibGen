@@ -25,11 +25,11 @@ public class Book {
     @Column
     private int samples;
 
-    //@ManyToMany(mappedBy = "booksList")
-    //private List<User> listUsers;
-
     @OneToMany(mappedBy = "book")
     private List<UsersBook> usersBookList;
+
+    @OneToMany(mappedBy = "book")
+    private List<ScheduleBook> usersBookListScheduled;
 
     // Constructor no argumento
     public Book(){}
@@ -69,10 +69,12 @@ public class Book {
     public List<UsersBook> getUsersBookList() {
         return usersBookList;
     }
-
     public void setUsersBookList(List<UsersBook> usersBookList) {
         this.usersBookList = usersBookList;
     }
+
+    public List<ScheduleBook> getUsersBookListScheduled() { return usersBookListScheduled; }
+    public void setUsersBookListScheduled(List<ScheduleBook> usersBookListScheduled) { this.usersBookListScheduled = usersBookListScheduled;  }
 
     public Book(String isbn, String title, String author, String publisher,
                 int samples) {

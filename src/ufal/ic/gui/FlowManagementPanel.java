@@ -129,6 +129,40 @@ public class FlowManagementPanel extends JPanel{
         });
 
         renewBook.addActionListener(e->{
+            if(user != null && book != null){
+                EntityManager EM = HibernateUtil.getManager();
+                Query q = EM.createQuery(
+                        "FROM UsersBook WHERE user_id = :user_id and book_id = :book_id")
+                        .setParameter("user_id", user.getEnrollment())
+                        .setParameter("book_id", book.getIsbn());
+                List<UsersBook> ub = q.getResultList();
+                System.out.println(q.getResultList());
+                if(ub.size() > 0) {
+                    for (UsersBook usersBook : ub) {
+                        System.out.println("TESTE" + usersBook.getBook().getInfo());
+                        Date dt = new Date();
+                        usersBook.setDataLocacao(dt);
+                        System.out.println(dt);
+                        Calendar c = Calendar.getInstance();
+                        c.setTime(dt);
+                        c.add(Calendar.DATE, 15);
+                        dt = c.getTime();
+                        usersBook.setDataEntrega(dt);
+                        System.out.println(dt);
+                        EM.getTransaction().begin();
+                        EM.merge(usersBook);
+                        EM.getTransaction().commit();
+                        JOptionPane.showMessageDialog(this, "Renovado com sucesso");
+                        TableUtil.buildTableModelF(booksRentedTable, BookUtil.getRentBookColumns(), user);
+                        TableUtil.resizeColumnWidth(booksRentedTable);
+                    }
+                }else{
+                    JOptionPane.showMessageDialog(this, "Livro Não locado por este usuário");
+                }
+            }else{
+                JOptionPane.showMessageDialog(this, "Selecione o usuário e o livro");
+            }
+
         });
 
         returnBook.addActionListener(e->{
@@ -154,7 +188,42 @@ public class FlowManagementPanel extends JPanel{
         });
 
         scheduleBook.addActionListener(e->{
-            JOptionPane.showMessageDialog(this, "Quero agendar");
+            //JOptionPane.showMessageDialog(this, "Quero agendar");
+            if(user != null && book != null){
+                EntityManager EM = HibernateUtil.getManager();
+                ScheduleBook sb = new ScheduleBook();
+                sb.setUser(user);
+                sb.setBook(book);
+                Query q = EM.createQuery(
+                        "FROM UsersBook WHERE book_id = :book_id")
+                        .setParameter("book_id", book.getIsbn());
+                List<UsersBook> ub = q.getResultList();
+                Date dt = new Date(Long.MAX_VALUE);
+                if(ub.size() > 0){
+                        for(UsersBook usersBook : ub ){
+                            if(usersBook.getBook().getSamples() == 0) {
+                                if (dt.compareTo(usersBook.getDataEntrega()) > 0) {
+                                    dt = usersBook.getDataEntrega();
+                                }
+                            }else{
+                                JOptionPane.showMessageDialog(this, "Há livros Disponíveis");
+                                break;
+                            }
+                        }
+                    sb.setDataReserva(dt);
+                    EM.getTransaction().begin();
+                    EM.persist(sb);
+                    EM.getTransaction().commit();
+                    JOptionPane.showMessageDialog(this, "Reservado com sucesso");
+
+                }else{
+                    JOptionPane.showMessageDialog(this, "Há livros Disponíveis");
+                }
+            }else{
+                JOptionPane.showMessageDialog(this, "Selecione o usuário e o livro");
+            }
+
+
         });
     }
 
