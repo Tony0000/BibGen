@@ -28,6 +28,7 @@ public class MainWindow {
     }
 
     public static void main(String[] args) {
+        /** Creates database and tables for the first time use, can be commented afterwards for lower overhead. */
 //        EntityManagerFactory factory = Persistence.
 //                createEntityManagerFactory("BibGen");
 //        factory.close();

@@ -20,7 +20,7 @@ public class HibernateUtil {
 
     /** Session handler for hibernate commands
      * @return an EntityManager from which you can grab the session */
-    public static EntityManager getSession() {
+    public static EntityManager getManager() {
         return manager;
     }
 }

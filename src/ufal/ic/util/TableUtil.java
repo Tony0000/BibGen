@@ -20,7 +20,7 @@ import java.util.Vector;
 public class TableUtil {
 
     public static void buildTableModelU(JTable table, Vector<String> columnNames) {
-        Query q = HibernateUtil.getSession().createQuery("from User");
+        Query q = HibernateUtil.getManager().createQuery("from User");
         List<User> l = q.getResultList();
 
         // number and names of the columns
@@ -42,7 +42,7 @@ public class TableUtil {
     }
 
     public static void buildTableModelB(JTable table, Vector<String> columnNames) {
-        Query q = HibernateUtil.getSession().createQuery("from Book");
+        Query q = HibernateUtil.getManager().createQuery("from Book");
         List<Book> l = q.getResultList();
 
         // number and names of the columns
@@ -64,7 +64,7 @@ public class TableUtil {
     }
 
     public static void buildTableModelF(JTable table, Vector<String> columnNames, User user) {
-        EntityManager EM = HibernateUtil.getSession();
+        EntityManager EM = HibernateUtil.getManager();
         Query q = EM.createQuery(
                 "FROM UsersBook WHERE user_id = :user_id")
                 .setParameter("user_id", user.getEnrollment());
@@ -78,11 +78,11 @@ public class TableUtil {
         for(UsersBook usersBook : listBooks) {
             String[] tmp = usersBook.getBook().getInfo();
             Vector<Object> vector = new Vector<Object>();
-            for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
+            for (int columnIndex = 0; columnIndex < columnCount-2; columnIndex++) {
                 vector.add(tmp[columnIndex]);
             }
-            //vector.add(usersBook.getDataLocacao());
-            //vector.add(usersBook.getDataEntrega());
+            vector.add(usersBook.getDataLocacao().toGMTString().substring(0,10));
+            vector.add(usersBook.getDataEntrega().toGMTString().substring(0,10));
             data.add(vector);
         }
 

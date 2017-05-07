@@ -81,6 +81,7 @@ public class BookManagementPanel extends JPanel {
             BookHandler.insert(book);
             ((DefaultTableModel)resultsTable.getModel()).fireTableDataChanged();
             TableUtil.buildTableModelB(resultsTable, booksColumns);
+            TableUtil.resizeColumnWidth(resultsTable);
         });
 
         updateButton.addActionListener(e -> {
@@ -89,6 +90,7 @@ public class BookManagementPanel extends JPanel {
             JOptionPane.showMessageDialog(registerBookPane, book.toString());
             BookHandler.update(book);
             TableUtil.buildTableModelB(resultsTable, booksColumns);
+            TableUtil.resizeColumnWidth(resultsTable);
         });
 
         removeButton.addActionListener(e -> {
@@ -97,6 +99,7 @@ public class BookManagementPanel extends JPanel {
             JOptionPane.showMessageDialog(registerBookPane, book.toString());
             BookHandler.remove(book);
             TableUtil.buildTableModelB(resultsTable, booksColumns);
+            TableUtil.resizeColumnWidth(resultsTable);
         });
     }
     private class SearchPanel extends JPanel {
@@ -156,9 +159,16 @@ public class BookManagementPanel extends JPanel {
 
         private void doSearch() {
             String field = GroupButtonUtil.getSelectedButtonText(buttonGroup);
-            System.out.println(field + " - " + inputText.getText());
-            Book b = BookHandler.findBy(inputText.getText());
+            Book b;
+            if(field.equals("ISBN")){
+                b = BookHandler.findBy(inputText.getText());
+            }else if(field.equals("Title")){
+                b = BookHandler.queryBookTableByTitle(inputText.getText()).get(0);
+            }else{
+                b = BookHandler.queryBookTableByAuthor(inputText.getText()).get(0);
+            }
             registerBookPane.fillMe(b);
+            inputText.setText("");
             JOptionPane.showMessageDialog(this, b.toString());
         }
     }

@@ -11,7 +11,7 @@ public class LibrarianHandler {
     private static EntityManager manager;
 
     public static Librarian findBy(String field){
-        manager = HibernateUtil.getSession();
+        manager = HibernateUtil.getManager();
         return manager.find(Librarian.class, field);
     }
 }

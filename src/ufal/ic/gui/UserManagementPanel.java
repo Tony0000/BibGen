@@ -80,6 +80,7 @@ public class UserManagementPanel extends JPanel {
                 JOptionPane.showMessageDialog(registerUserPane, user.toString());
                 UserHandler.insert(user);
                 TableUtil.buildTableModelU(resultsTable, userColumns);
+                TableUtil.resizeColumnWidth(resultsTable);
             }
         });
 
@@ -91,6 +92,7 @@ public class UserManagementPanel extends JPanel {
                 JOptionPane.showMessageDialog(registerUserPane, user.toString());
                 UserHandler.update(user);
                 TableUtil.buildTableModelU(resultsTable, userColumns);
+                TableUtil.resizeColumnWidth(resultsTable);
             }
         });
 
@@ -101,6 +103,7 @@ public class UserManagementPanel extends JPanel {
                 JOptionPane.showMessageDialog(registerUserPane, user.toString());
                 UserHandler.remove(user);
                 TableUtil.buildTableModelU(resultsTable, userColumns);
+                TableUtil.resizeColumnWidth(resultsTable);
             }
         });
     }
@@ -162,9 +165,16 @@ public class UserManagementPanel extends JPanel {
 
         private void doSearch() {
             String field = GroupButtonUtil.getSelectedButtonText(buttonGroup);
-            System.out.println(field + " - " + inputText.getText());
-            User u = UserHandler.findBy(inputText.getText());
+            User u;
+            if(field.equals("Enrollment")){
+                u = UserHandler.findBy(inputText.getText());
+            }else if (field.equals("Name")){
+                u = UserHandler.queryUserTableByName(inputText.getText()).get(0);
+            }else{
+                u = UserHandler.queryUserTableByEmail(inputText.getText()).get(0);
+            }
             registerUserPane.fillMe(u);
+            inputText.setText("");
             JOptionPane.showMessageDialog(this, u.toString());
         }
     }

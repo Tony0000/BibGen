@@ -7,7 +7,6 @@ import ufal.ic.util.TableUtil;
 
 import javax.imageio.ImageIO;
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
@@ -38,10 +37,8 @@ public class FlowManagementPanel extends JPanel{
         booksColumns.add("ISBN");
         booksColumns.add("Title");
         booksColumns.add("Author");
-        booksColumns.add("Publisher");
-        booksColumns.add("Units");
-      //  booksColumns.add("Rented at");
-      //  booksColumns.add("Due in");
+        booksColumns.add("Rented at");
+        booksColumns.add("Due in");
 
         bookInfo = new RegisterPanel(booksColumns);
         searchPane = new SearchPanel(new String[]{"enrollment", "ISBN"});
@@ -64,6 +61,7 @@ public class FlowManagementPanel extends JPanel{
         booksRentedTable = new JTable();
         booksRentedTable.setEnabled(false);
         //TableUtil.buildTableModelF(booksRentedTable, booksColumns);
+        TableUtil.buildTableModelF(booksRentedTable, booksColumns, new User());
         TableUtil.resizeColumnWidth(booksRentedTable);
 
         tablePane = new JPanel();
@@ -91,7 +89,7 @@ public class FlowManagementPanel extends JPanel{
     private void setUpButtons() {
         rentBook.addActionListener(e->{
             if(user != null && book != null){
-                EntityManager em = HibernateUtil.getSession();
+                EntityManager em = HibernateUtil.getManager();
                 // Checa se há livro disponivel
                 if(book.getSamples() > 0) {
                     // Decrementa a quantidade de livros disponveis
@@ -130,15 +128,15 @@ public class FlowManagementPanel extends JPanel{
                     JOptionPane.showMessageDialog(this, "Não há livros disponíveis");
                 }
 
-
             } else{
                 JOptionPane.showMessageDialog(this, "Selecione o usuário e o livro");
             }
-
+            TableUtil.buildTableModelF(booksRentedTable, booksColumns, user);
+            TableUtil.resizeColumnWidth(booksRentedTable);
+            book = null;
         });
 
         renewBook.addActionListener(e->{
-            JOptionPane.showMessageDialog(this, "Quero renovar");
         });
 
         returnBook.addActionListener(e->{
@@ -234,7 +232,6 @@ public class FlowManagementPanel extends JPanel{
                 user = UserHandler.findBy(inputText.getText());
                 JOptionPane.showMessageDialog(this, user.toString());
                 //TODO: CONSULTE O BANCO E TRAGA OS LIVROS ALUGADOS
-                Vector<String> booksRentedColumns = booksColumns;
                 TableUtil.buildTableModelF(booksRentedTable, booksColumns, user);
 
             } else if (field.equals("ISBN")) {
