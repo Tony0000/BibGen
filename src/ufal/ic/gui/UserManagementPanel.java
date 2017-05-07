@@ -1,9 +1,10 @@
 package ufal.ic.gui;
 
 import ufal.ic.util.GroupButtonUtil;
+import ufal.ic.util.SpringUtilities;
 import ufal.ic.util.TableUtil;
 import ufal.ic.entities.User;
-import ufal.ic.entities.UserHandler;
+import ufal.ic.util.UserUtil;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -20,33 +21,26 @@ public class UserManagementPanel extends JPanel {
     JPanel leftPane, searchPanel;
     RegisterPanel registerUserPane;
     protected JButton addButton, updateButton, removeButton;
-    Vector<String> userColumns;
     JTable resultsTable;
     Vector< Vector<String> > data;
 
     public UserManagementPanel() {
 
         /** Instantiate variables*/
-        userColumns = new Vector<>();
         data = new Vector<>();
         resultsTable = new JTable();
         resultsTable.setEnabled(false);
 
-        /** Setting sample headers for user table*/
-        userColumns.add("Enrollment");
-        userColumns.add("Name");
-        userColumns.add("Email");
-        userColumns.add("Course");
 
         /** Instantiate dependent variables*/
-        registerUserPane = new RegisterPanel("user", userColumns);
+        registerUserPane = new RegisterPanel("user", UserUtil.getColumns());
         registerUserPane.setPreferredSize(new Dimension(300,300));
         leftPane = new JPanel(new GridLayout());
-        searchPanel = new SearchPanel(registerUserPane, userColumns, 3);
+        searchPanel = new SearchPanel(registerUserPane, UserUtil.getColumns(), 3);
         leftPane.add(new JScrollPane(resultsTable), BorderLayout.CENTER);
 
         /** Instantiate and setting Data Model for the table*/
-        TableUtil.buildTableModelU(resultsTable, userColumns);
+        TableUtil.buildTableModelU(resultsTable, UserUtil.getColumns());
         TableUtil.resizeColumnWidth(resultsTable);
 
         addButton = new JButton("Insert");
@@ -77,9 +71,8 @@ public class UserManagementPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 User user = registerUserPane.getFields();
-                JOptionPane.showMessageDialog(registerUserPane, user.toString());
-                UserHandler.insert(user);
-                TableUtil.buildTableModelU(resultsTable, userColumns);
+                UserUtil.insert(user);
+                TableUtil.buildTableModelU(resultsTable, UserUtil.getColumns());
                 TableUtil.resizeColumnWidth(resultsTable);
             }
         });
@@ -89,9 +82,8 @@ public class UserManagementPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 //TODO: query update to user table
                 User user = registerUserPane.getFields();
-                JOptionPane.showMessageDialog(registerUserPane, user.toString());
-                UserHandler.update(user);
-                TableUtil.buildTableModelU(resultsTable, userColumns);
+                UserUtil.update(user);
+                TableUtil.buildTableModelU(resultsTable, UserUtil.getColumns());
                 TableUtil.resizeColumnWidth(resultsTable);
             }
         });
@@ -100,9 +92,8 @@ public class UserManagementPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 User user = registerUserPane.getFields();
-                JOptionPane.showMessageDialog(registerUserPane, user.toString());
-                UserHandler.remove(user);
-                TableUtil.buildTableModelU(resultsTable, userColumns);
+                UserUtil.remove(user);
+                TableUtil.buildTableModelU(resultsTable, UserUtil.getColumns());
                 TableUtil.resizeColumnWidth(resultsTable);
             }
         });
@@ -167,15 +158,15 @@ public class UserManagementPanel extends JPanel {
             String field = GroupButtonUtil.getSelectedButtonText(buttonGroup);
             User u;
             if(field.equals("Enrollment")){
-                u = UserHandler.findBy(inputText.getText());
+                u = UserUtil.findBy(inputText.getText());
             }else if (field.equals("Name")){
-                u = UserHandler.queryUserTableByName(inputText.getText()).get(0);
+                u = UserUtil.queryUserTableByName(inputText.getText()).get(0);
             }else{
-                u = UserHandler.queryUserTableByEmail(inputText.getText()).get(0);
+                u = UserUtil.queryUserTableByEmail(inputText.getText()).get(0);
             }
             registerUserPane.fillMe(u);
             inputText.setText("");
-            JOptionPane.showMessageDialog(this, u.toString());
+            TableUtil.buildTableModelU(resultsTable, UserUtil.getColumns());
         }
     }
 

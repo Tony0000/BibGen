@@ -1,12 +1,11 @@
 package ufal.ic.gui;
 
 import ufal.ic.entities.*;
-import ufal.ic.util.GroupButtonUtil;
-import ufal.ic.util.HibernateUtil;
-import ufal.ic.util.TableUtil;
+import ufal.ic.util.*;
 
 import javax.imageio.ImageIO;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
@@ -17,9 +16,8 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Vector;
+import java.util.*;
+import java.util.List;
 
 /**
  * Created by manoel on 02/05/2017.
@@ -28,19 +26,12 @@ public class FlowManagementPanel extends JPanel{
     JButton rentBook, renewBook, returnBook, scheduleBook;
     JPanel menuPane, searchPane, tablePane, bookInfo;
     JTable booksRentedTable;
-    Vector<String> booksColumns;
     User user;
     Book book;
 
     public FlowManagementPanel(){
-        booksColumns = new Vector<>();
-        booksColumns.add("ISBN");
-        booksColumns.add("Title");
-        booksColumns.add("Author");
-        booksColumns.add("Rented at");
-        booksColumns.add("Due in");
 
-        bookInfo = new RegisterPanel(booksColumns);
+        bookInfo = new RegisterPanel(BookUtil.getBookColumns());
         searchPane = new SearchPanel(new String[]{"enrollment", "ISBN"});
         /** Buttons for the options menu*/
         rentBook = scaleDownImage("plus.png");
@@ -61,7 +52,7 @@ public class FlowManagementPanel extends JPanel{
         booksRentedTable = new JTable();
         booksRentedTable.setEnabled(false);
         //TableUtil.buildTableModelF(booksRentedTable, booksColumns);
-        TableUtil.buildTableModelF(booksRentedTable, booksColumns, new User());
+        TableUtil.buildTableModelF(booksRentedTable, BookUtil.getRentBookColumns(), new User());
         TableUtil.resizeColumnWidth(booksRentedTable);
 
         tablePane = new JPanel();
@@ -131,8 +122,9 @@ public class FlowManagementPanel extends JPanel{
             } else{
                 JOptionPane.showMessageDialog(this, "Selecione o usuário e o livro");
             }
-            TableUtil.buildTableModelF(booksRentedTable, booksColumns, user);
+            TableUtil.buildTableModelF(booksRentedTable, BookUtil.getRentBookColumns(), user);
             TableUtil.resizeColumnWidth(booksRentedTable);
+            ((RegisterPanel)bookInfo).clear();
             book = null;
         });
 
@@ -140,7 +132,25 @@ public class FlowManagementPanel extends JPanel{
         });
 
         returnBook.addActionListener(e->{
-            JOptionPane.showMessageDialog(this, "Quero devolver");
+            if(book!= null && user != null){
+                EntityManager EM = HibernateUtil.getManager();
+                Query q = EM.createQuery(
+                        "FROM UsersBook WHERE book_id = :book_id");
+                q.setParameter("book_id", book.getIsbn());
+                List<UsersBook> relations = q.getResultList();
+                EM.getTransaction().begin();
+                EM.remove(EM.find(UsersBook.class,relations.get(0).getId()));
+                EM.getTransaction().commit();
+                book.setSamples(book.getSamples()+1);
+                BookUtil.update(book);
+            }else{
+                JOptionPane.showMessageDialog(this, "Nenhum livro ou usuario selecionado");
+            }
+
+            TableUtil.buildTableModelF(booksRentedTable, BookUtil.getRentBookColumns(), user);
+            TableUtil.resizeColumnWidth(booksRentedTable);
+            ((RegisterPanel)bookInfo).clear();
+            book = null;
         });
 
         scheduleBook.addActionListener(e->{
@@ -195,7 +205,8 @@ public class FlowManagementPanel extends JPanel{
             radioButtons = new JRadioButton[3];
             buttonGroup = new ButtonGroup();
 
-            /** Selectable options for search bar and set the one selected by default. Then group and addButton them to the panel.*/
+            /** Selectable options for search bar and set the one selected by default.
+             * Then group and addButton them to the panel.*/
             for (int i = 0; i < item.length; i++) {
                 radioButtons[i] = new JRadioButton(item[i]);
             }
@@ -229,15 +240,12 @@ public class FlowManagementPanel extends JPanel{
             String field = GroupButtonUtil.getSelectedButtonText(buttonGroup);
 
             if (field.equals("enrollment")) {
-                user = UserHandler.findBy(inputText.getText());
-                JOptionPane.showMessageDialog(this, user.toString());
-                //TODO: CONSULTE O BANCO E TRAGA OS LIVROS ALUGADOS
-                TableUtil.buildTableModelF(booksRentedTable, booksColumns, user);
+                user = UserUtil.findBy(inputText.getText());
+                TableUtil.buildTableModelF(booksRentedTable, BookUtil.getRentBookColumns(), user);
 
             } else if (field.equals("ISBN")) {
-                book = BookHandler.findBy(inputText.getText());
+                book = BookUtil.findBy(inputText.getText());
                 ((RegisterPanel)bookInfo).fillMe(book);
-                JOptionPane.showMessageDialog(this, book.toString());
             }
             inputText.setText("");
         }
@@ -267,24 +275,6 @@ public class FlowManagementPanel extends JPanel{
                     4, 4);       //xPad, yPad
         }
 
-
-        public User getFields() {
-            String[] userFields = new String[5];
-            int i = 0;
-            Component[] components = getComponents();
-            for (Component c : components) {
-                if (c instanceof JTextField) {
-                    JTextField tmp = ((JTextField) c);
-                    if (tmp.getText() == null)
-                        return null;
-                    userFields[i] = tmp.getText();
-                    tmp.setText("");
-                    i++;
-                }
-            }
-            return new User(userFields[0], userFields[1], userFields[2], userFields[3]);
-        }
-
         public void fillMe(Book book){
             String[] bookFields = book.getInfo();
 
@@ -295,6 +285,16 @@ public class FlowManagementPanel extends JPanel{
                     JTextField tmp =((JTextField) c);
                     tmp.setText(bookFields[i]);
                     i++;
+                }
+            }
+        }
+
+        public void clear(){
+            Component[] components = getComponents();
+            for(Component c : components){
+                if(c instanceof JTextField){
+                    JTextField tmp =((JTextField) c);
+                    tmp.setText("");
                 }
             }
         }

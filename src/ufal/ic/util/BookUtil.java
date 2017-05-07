@@ -1,17 +1,39 @@
-package ufal.ic.entities;
+package ufal.ic.util;
 
-import ufal.ic.util.HibernateUtil;
+import ufal.ic.entities.Book;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * Created by manoel on 05/05/2017.
  */
-public class BookHandler {
+public class BookUtil {
 
     private static EntityManager manager;
+    private static Vector<String> columns;
+
+    public static Vector<String> getBookColumns(){
+        columns = new Vector<>();
+        columns.add("ISBN");
+        columns.add("Title");
+        columns.add("Author");
+        columns.add("Publisher");
+        columns.add("Units");
+        return columns;
+    }
+
+    public static Vector<String> getRentBookColumns(){
+        columns = new Vector<>();
+        columns.add("ISBN");
+        columns.add("Title");
+        columns.add("Author");
+        columns.add("Rented at");
+        columns.add("Due in");
+        return columns;
+    }
 
     public static void update(Book book){
         manager = HibernateUtil.getManager();

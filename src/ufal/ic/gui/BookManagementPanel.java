@@ -1,8 +1,9 @@
 package ufal.ic.gui;
 
 import ufal.ic.entities.Book;
-import ufal.ic.entities.BookHandler;
+import ufal.ic.util.BookUtil;
 import ufal.ic.util.GroupButtonUtil;
+import ufal.ic.util.SpringUtilities;
 import ufal.ic.util.TableUtil;
 
 import javax.swing.*;
@@ -20,35 +21,27 @@ public class BookManagementPanel extends JPanel {
     JPanel leftPane, searchPanel;
     RegisterPanel registerBookPane;
     protected JButton addButton, updateButton, removeButton;
-    Vector<String> booksColumns;
     JTable resultsTable;
     Vector<Vector<String>> data;
 
     public BookManagementPanel() {
 
         /** Instantiate variables*/
-        booksColumns = new Vector<>();
         data = new Vector<>();
         resultsTable = new JTable();
         resultsTable.setEnabled(false);
 
-        /** Setting sample headers for user table*/
-        booksColumns.add("ISBN");
-        booksColumns.add("Title");
-        booksColumns.add("Author");
-        booksColumns.add("Publisher");
-        booksColumns.add("Units");
 
         /** Instantiate dependent variables*/
-        registerBookPane = new RegisterPanel("books", booksColumns);
+        registerBookPane = new RegisterPanel("books", BookUtil.getBookColumns());
         registerBookPane.setPreferredSize(new Dimension(300,300));
         leftPane = new JPanel(new GridLayout());
-        searchPanel = new SearchPanel(booksColumns, 3);
+        searchPanel = new SearchPanel(BookUtil.getBookColumns(), 3);
         leftPane.add(new JScrollPane(resultsTable), BorderLayout.CENTER);
 
         /** Instantiate and setting Data Model for the table*/
 //        resultsTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-        TableUtil.buildTableModelB(resultsTable, booksColumns);
+        TableUtil.buildTableModelB(resultsTable, BookUtil.getBookColumns());
         TableUtil.resizeColumnWidth(resultsTable);
 
         addButton = new JButton("Insert");
@@ -77,28 +70,25 @@ public class BookManagementPanel extends JPanel {
         addButton.addActionListener(e -> {
             //TODO: query insert into user table
             Book book = registerBookPane.getFields();
-            JOptionPane.showMessageDialog(registerBookPane, book.toString());
-            BookHandler.insert(book);
+            BookUtil.insert(book);
             ((DefaultTableModel)resultsTable.getModel()).fireTableDataChanged();
-            TableUtil.buildTableModelB(resultsTable, booksColumns);
+            TableUtil.buildTableModelB(resultsTable, BookUtil.getRentBookColumns());
             TableUtil.resizeColumnWidth(resultsTable);
         });
 
         updateButton.addActionListener(e -> {
             //TODO: query update to user table
             Book book = registerBookPane.getFields();
-            JOptionPane.showMessageDialog(registerBookPane, book.toString());
-            BookHandler.update(book);
-            TableUtil.buildTableModelB(resultsTable, booksColumns);
+            BookUtil.update(book);
+            TableUtil.buildTableModelB(resultsTable, BookUtil.getRentBookColumns());
             TableUtil.resizeColumnWidth(resultsTable);
         });
 
         removeButton.addActionListener(e -> {
             //TODO: query remove from user table
             Book book = registerBookPane.getFields();
-            JOptionPane.showMessageDialog(registerBookPane, book.toString());
-            BookHandler.remove(book);
-            TableUtil.buildTableModelB(resultsTable, booksColumns);
+            BookUtil.remove(book);
+            TableUtil.buildTableModelB(resultsTable, BookUtil.getRentBookColumns());
             TableUtil.resizeColumnWidth(resultsTable);
         });
     }
@@ -161,15 +151,15 @@ public class BookManagementPanel extends JPanel {
             String field = GroupButtonUtil.getSelectedButtonText(buttonGroup);
             Book b;
             if(field.equals("ISBN")){
-                b = BookHandler.findBy(inputText.getText());
+                b = BookUtil.findBy(inputText.getText());
             }else if(field.equals("Title")){
-                b = BookHandler.queryBookTableByTitle(inputText.getText()).get(0);
+                b = BookUtil.queryBookTableByTitle(inputText.getText()).get(0);
             }else{
-                b = BookHandler.queryBookTableByAuthor(inputText.getText()).get(0);
+                b = BookUtil.queryBookTableByAuthor(inputText.getText()).get(0);
             }
             registerBookPane.fillMe(b);
             inputText.setText("");
-            JOptionPane.showMessageDialog(this, b.toString());
+            TableUtil.buildTableModelB(resultsTable, BookUtil.getRentBookColumns());
         }
     }
 

@@ -1,18 +1,29 @@
-package ufal.ic.entities;
+package ufal.ic.util;
 
-import ufal.ic.util.HibernateUtil;
+import ufal.ic.entities.User;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * Class which handles commands such as insert, update, remove, find to the hibernate connection.
  * Created by manoel on 05/05/2017.
  */
-public class UserHandler {
+public class UserUtil {
 
     private static EntityManager manager;
+    private static Vector<String> userColumns;
+
+    public static Vector<String> getColumns(){
+        userColumns = new Vector<>();
+        userColumns.add("Enrollment");
+        userColumns.add("Name");
+        userColumns.add("Email");
+        userColumns.add("Course");
+        return userColumns;
+    }
 
     public static void update(User user){
         manager = HibernateUtil.getManager();

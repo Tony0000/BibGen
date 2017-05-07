@@ -1,4 +1,4 @@
-package ufal.ic.gui;
+package ufal.ic.util;
 
 /**
  * Created by manoel on 01/05/2017.

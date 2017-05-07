@@ -35,7 +35,7 @@ public class UsersBook {
         this.id = id;
     }
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "USER_ID")
     public User getUser() {
         return user;
@@ -45,7 +45,7 @@ public class UsersBook {
         this.user = user;
     }
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "BOOK_ID")
     public Book getBook() {
         return book;
