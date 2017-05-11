@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class FlowManagementPanel extends JPanel{
     JButton rentBook, renewBook, returnBook, scheduleBook;
-    JPanel menuPane, searchPane, tablePane, bookInfo;
+    JPanel menuPane, searchPane, tablePane, bookInfo, resultPane;
     JTable booksRentedTable;
     User user;
     Book book;
@@ -33,6 +33,7 @@ public class FlowManagementPanel extends JPanel{
 
         bookInfo = new RegisterPanel(BookUtil.getBookColumns());
         searchPane = new SearchPanel(new String[]{"enrollment", "ISBN"});
+        resultPane = new ResultPanel();
         /** Buttons for the options menu*/
         rentBook = scaleDownImage("plus.png");
         renewBook = scaleDownImage("forward.png");
@@ -63,7 +64,8 @@ public class FlowManagementPanel extends JPanel{
         upperPane.setLayout(new BoxLayout(upperPane, BoxLayout.X_AXIS));
         Dimension prefSize = new Dimension(300, 50);
         upperPane.add(searchPane);
-        upperPane.add(new Box.Filler(prefSize, prefSize, prefSize));
+        upperPane.add(resultPane);
+        //upperPane.add(new Box.Filler(prefSize, prefSize, prefSize));
         upperPane.add(menuPane);
 
         JSplitPane bottomSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tablePane, bookInfo);
@@ -139,7 +141,6 @@ public class FlowManagementPanel extends JPanel{
                 System.out.println(q.getResultList());
                 if(ub.size() > 0) {
                     for (UsersBook usersBook : ub) {
-                        System.out.println("TESTE" + usersBook.getBook().getInfo());
                         Date dt = new Date();
                         usersBook.setDataLocacao(dt);
                         System.out.println(dt);
@@ -172,11 +173,30 @@ public class FlowManagementPanel extends JPanel{
                         "FROM UsersBook WHERE book_id = :book_id");
                 q.setParameter("book_id", book.getIsbn());
                 List<UsersBook> relations = q.getResultList();
+
+                Date dt = new Date();
+                Date dt1 = relations.get(0).getDataEntrega();
+                Boolean cond = false;
+                if(dt.compareTo(relations.get(0).getDataEntrega()) > 0){
+                    long days_between = ((dt.getTime() - dt1.getTime()) / (1000 * 60 * 60 * 24));
+                    Integer days = (int) (long) days_between;
+                    user.setPenalty(user.getPenalty() + days);
+                    cond = true;
+                }
+
+
                 EM.getTransaction().begin();
                 EM.remove(EM.find(UsersBook.class,relations.get(0).getId()));
+                EM.merge(user);
                 EM.getTransaction().commit();
                 book.setSamples(book.getSamples()+1);
                 BookUtil.update(book);
+                if(cond){
+                    JOptionPane.showMessageDialog(this, "Usuário com Multa");
+                }
+                else{
+                    JOptionPane.showMessageDialog(this, "Livro devolvido com sucesso!");
+                }
             }else{
                 JOptionPane.showMessageDialog(this, "Nenhum livro ou usuario selecionado");
             }
@@ -200,16 +220,16 @@ public class FlowManagementPanel extends JPanel{
                 List<UsersBook> ub = q.getResultList();
                 Date dt = new Date(Long.MAX_VALUE);
                 if(ub.size() > 0){
-                        for(UsersBook usersBook : ub ){
-                            if(usersBook.getBook().getSamples() == 0) {
-                                if (dt.compareTo(usersBook.getDataEntrega()) > 0) {
-                                    dt = usersBook.getDataEntrega();
-                                }
-                            }else{
-                                JOptionPane.showMessageDialog(this, "Há livros Disponíveis");
-                                break;
+                    for(UsersBook usersBook : ub ){
+                        if(usersBook.getBook().getSamples() == 0) {
+                            if (dt.compareTo(usersBook.getDataEntrega()) > 0) {
+                                dt = usersBook.getDataEntrega();
                             }
+                        }else{
+                            JOptionPane.showMessageDialog(this, "Há livros Disponíveis");
+                            break;
                         }
+                    }
                     sb.setDataReserva(dt);
                     EM.getTransaction().begin();
                     EM.persist(sb);
@@ -225,9 +245,7 @@ public class FlowManagementPanel extends JPanel{
 
 
         });
-    }
-
-    /** Given an input image it will scale it down and set it as an icon for a jbutton
+    }    /** Given an input image it will scale it down and set it as an icon for a jbutton
      * @param imgName image path
      * @return an instance of a button
      * */
@@ -252,6 +270,32 @@ public class FlowManagementPanel extends JPanel{
             e.printStackTrace();
         }
         return null;
+    }
+
+    private class ResultPanel extends JPanel{
+        JLabel name, taxValue;
+        public ResultPanel(){
+            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+            setBorder(new TitledBorder("User"));
+            name = new JLabel("Nome: ");
+            taxValue = new JLabel();
+            if(user != null)
+                taxValue.setText("Multa acumulada: R$"+user.getPenalty());
+            else
+                taxValue.setText("Multa acumulada: R$");
+            add(name);
+            add(taxValue);
+        }
+
+        public void setResultPanel(String username, String tax){
+            name.setText("Nome: " + username);
+            taxValue.setText("Multa acumulada: R$"+tax);
+        }
+
+        public void clearValues(){
+            name.setText("");
+            taxValue.setText("");
+        }
     }
 
     private class SearchPanel extends JPanel {
@@ -311,7 +355,7 @@ public class FlowManagementPanel extends JPanel{
             if (field.equals("enrollment")) {
                 user = UserUtil.findBy(inputText.getText());
                 TableUtil.buildTableModelF(booksRentedTable, BookUtil.getRentBookColumns(), user);
-
+                ((ResultPanel)resultPane).setResultPanel(user.getName(), user.getPenalty().toString());
             } else if (field.equals("ISBN")) {
                 book = BookUtil.findBy(inputText.getText());
                 ((RegisterPanel)bookInfo).fillMe(book);

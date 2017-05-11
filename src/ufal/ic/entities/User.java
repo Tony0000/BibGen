@@ -22,6 +22,10 @@ public class User {
     @Column
     private String course;
 
+    @Column
+    private Integer penalty = 0;
+
+
     @OneToMany(mappedBy = "user")
     private List<UsersBook> usersBooks;
 
@@ -74,6 +78,15 @@ public class User {
     public List<ScheduleBook> getUsersBooksSchedule() { return usersBooksSchedule;  }
 
     public void setUsersBooksSchedule(List<ScheduleBook> usersBooksSchedule) { this.usersBooksSchedule = usersBooksSchedule;  }
+
+    public Integer getPenalty() {
+        return penalty;
+    }
+
+    public void setPenalty(Integer penalty) {
+        this.penalty = penalty;
+    }
+
 
 
     @Override

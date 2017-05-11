@@ -81,8 +81,8 @@ public class TableUtil {
             for (int columnIndex = 0; columnIndex < columnCount-2; columnIndex++) {
                 vector.add(tmp[columnIndex]);
             }
-            vector.add(usersBook.getDataLocacao().toGMTString().substring(0,10));
-            vector.add(usersBook.getDataEntrega().toGMTString().substring(0,10));
+            vector.add(usersBook.getDataLocacao().toGMTString().substring(0,11));
+            vector.add(usersBook.getDataEntrega().toGMTString().substring(0,11));
             data.add(vector);
         }
 
