@@ -13,7 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
 
-/**
+/** User registering pane, which includes a search bar, an user updater tool, and a table of registered users
  * Created by manoel on 02/05/2017.
  */
 public class UserManagementPanel extends JPanel {
@@ -61,15 +61,12 @@ public class UserManagementPanel extends JPanel {
         JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPane, rightPane);
         split.setOneTouchExpandable(false);
         split.setEnabled(false);
-//        leftPane.setMinimumSize(new Dimension(600,500));
-//        rightPane.setMaximumSize(new Dimension(300,300));
-//        split.setPreferredSize(new Dimension(1000,500));
         split.setResizeWeight(0.7);
 
         add(split);
     }
 
-    /** Provides the action each button has to execute once it's clicked. */
+    /** Provides the action each button has to execute once they're clicked. */
     public void setUpButtons(){
         addButton.addActionListener(new ActionListener() {
             @Override
@@ -103,6 +100,7 @@ public class UserManagementPanel extends JPanel {
         });
     }
 
+    /** Sets up the search bar pane*/
     private class SearchPanel extends JPanel {
 
         private JRadioButton[] radioButtons;
@@ -158,6 +156,7 @@ public class UserManagementPanel extends JPanel {
             add(new Box.Filler(maxSize, maxSize, maxSize));
         }
 
+        /** Search operation logic */
         private void doSearch() {
             String field = GroupButtonUtil.getSelectedButtonText(buttonGroup);
             User u;
@@ -174,6 +173,7 @@ public class UserManagementPanel extends JPanel {
         }
     }
 
+    /** Sets up the register pane*/
     private class RegisterPanel extends JPanel{
 
         public RegisterPanel(String item, Vector<String> field) {
@@ -213,6 +213,8 @@ public class UserManagementPanel extends JPanel {
             return new User(userFields[0], userFields[1], userFields[2], userFields[3]);
         }
 
+        /** Fills the register pane with the current user
+         * @param user user to have its information retrieved*/
         public void fillMe(User user){
             String[] userFields = user.getInfo();
 

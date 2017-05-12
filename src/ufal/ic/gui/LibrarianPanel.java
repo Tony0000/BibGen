@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.IOException;
 
 /**
+ * Outmost panel for all components accessible to a Librarian, such as registering
+ * users, books, books operations and generating reports
  * Created by manoel on 30/04/2017.
  */
 public class LibrarianPanel extends JPanel{
@@ -22,7 +24,7 @@ public class LibrarianPanel extends JPanel{
         setLayout(new GridBagLayout());
         booksTab = new BookManagementPanel();
         usersTab = new UserManagementPanel();
-        reportsTab = new JPanel();
+        reportsTab = new ReportManagementPanel();
         flowTab = new FlowManagementPanel();
         tabs = new JPanel(new CardLayout());
 
@@ -50,6 +52,9 @@ public class LibrarianPanel extends JPanel{
 
     }
 
+    /** Creates a jbutton, resizes and sets its icon
+     * @param imgName icon name with format
+     * @return a formatted JButton*/
     private JButton scaleDownImage(String imgName) {
         BufferedImage master;
 
@@ -76,6 +81,7 @@ public class LibrarianPanel extends JPanel{
         this.reference = cards;
     }
 
+    /** The menu which handles the tabs selection and quit session buttons*/
     private class MenuPanel extends JPanel{
         JButton[] session;
 

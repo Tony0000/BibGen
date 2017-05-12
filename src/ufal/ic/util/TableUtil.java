@@ -15,10 +15,14 @@ import java.util.List;
 import java.util.Vector;
 
 /**
+ * Helper class to handle JTables updates after button presses.
  * Created by manoel on 06/05/2017.
  */
 public class TableUtil {
 
+    /** Generates a new table model with updated data of registered users from the database
+     * @param table the table to be updated
+     * @param columnNames the columns' names to fill the header of the table */
     public static void buildTableModelU(JTable table, Vector<String> columnNames) {
         Query q = HibernateUtil.getManager().createQuery("from User");
         List<User> l = q.getResultList();
@@ -41,6 +45,9 @@ public class TableUtil {
         table.setModel(model);
     }
 
+    /** Generates a new table model with updated data of registered books from the database
+     * @param table the table to be updated
+     * @param columnNames the columns' names to fill the header of the table */
     public static void buildTableModelB(JTable table, Vector<String> columnNames) {
         Query q = HibernateUtil.getManager().createQuery("from Book");
         List<Book> l = q.getResultList();
@@ -63,6 +70,10 @@ public class TableUtil {
         table.setModel(model);
     }
 
+    /** Generates a new table model with updated data about the rented books from the database
+     * @param table the table to be updated
+     * @param columnNames the columns' names to fill the header of the table
+     * @param user user which requested the operation */
     public static void buildTableModelF(JTable table, Vector<String> columnNames, User user) {
         EntityManager EM = HibernateUtil.getManager();
         Query q = EM.createQuery(
@@ -90,6 +101,8 @@ public class TableUtil {
         table.setModel(model);
     }
 
+    /** Resizes each column of the table to fit the header and data
+     * @param table the table to have its columns resized */
     public static void resizeColumnWidth(JTable table) {
         final TableColumnModel columnModel = table.getColumnModel();
         for (int column = 0; column < table.getColumnCount(); column++) {

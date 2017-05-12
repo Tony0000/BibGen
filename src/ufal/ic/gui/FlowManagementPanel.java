@@ -20,6 +20,9 @@ import java.util.*;
 import java.util.List;
 
 /**
+ * Flow Pane of rented, returned, overdue and scheduled books information of a given user
+ * which includes a search bar, a selection of buttons for book related operations, and
+ * a table of registered books to a given user.
  * Created by manoel on 02/05/2017.
  */
 public class FlowManagementPanel extends JPanel{
@@ -85,6 +88,7 @@ public class FlowManagementPanel extends JPanel{
 
     }
 
+    /** Sets up the buttons operations */
     private void setUpButtons() {
         rentBook.addActionListener(e->{
             if(user != null && book != null){
@@ -299,6 +303,7 @@ public class FlowManagementPanel extends JPanel{
         return null;
     }
 
+    /** Sets up the result pane*/
     private class ResultPanel extends JPanel{
 
         JLabel name, taxValue;
@@ -328,6 +333,7 @@ public class FlowManagementPanel extends JPanel{
 
     }
 
+    /** Sets up the search bar pane*/
     private class SearchPanel extends JPanel {
 
         private JRadioButton[] radioButtons;
@@ -379,13 +385,14 @@ public class FlowManagementPanel extends JPanel{
             add(confirm);
         }
 
+        /** Search operation logic */
         private void doSearch() {
             String field = GroupButtonUtil.getSelectedButtonText(buttonGroup);
 
             if (field.equals("enrollment")) {
                 user = UserUtil.findBy(inputText.getText());
                 TableUtil.buildTableModelF(booksRentedTable, BookUtil.getRentBookColumns(), user);
-                ((ResultPanel)resultPane).setName(user.getName());
+                resultPane.setName(user.getName());
                 ((ResultPanel)resultPane).setTaxValue(user.getPenalty().toString());
             } else if (field.equals("ISBN")) {
                 book = BookUtil.findBy(inputText.getText());
@@ -395,6 +402,7 @@ public class FlowManagementPanel extends JPanel{
         }
     }
 
+    /** Sets up the register pane*/
     private class RegisterPanel extends JPanel {
 
         public RegisterPanel(Vector<String> field) {

@@ -46,6 +46,7 @@ public class LoginPanel extends JPanel {
         addComponentsToPane();
     }
 
+    /** Checks if the inputted login and password has a correspondent in the database */
     private void tryLogin() {
         if(!userInput.getText().isEmpty() && passInput.getPassword().length > 0){
             Librarian login = LibrarianUtil.findBy(userInput.getText());

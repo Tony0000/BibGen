@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
+ * Manages the transition of two tabs, the Login and Librarian interface panels
  * Created by manoel on 30/04/2017.
  */
 public class PanelManager{

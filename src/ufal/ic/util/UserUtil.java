@@ -16,6 +16,7 @@ public class UserUtil {
     private static EntityManager manager;
     private static Vector<String> userColumns;
 
+    /** Creates an vector with users header and returns the vector */
     public static Vector<String> getColumns(){
         userColumns = new Vector<>();
         userColumns.add("Enrollment");
@@ -25,6 +26,8 @@ public class UserUtil {
         return userColumns;
     }
 
+    /** Updates the data of a given user in the database
+     * @param user the object to be updated */
     public static void update(User user){
         manager = HibernateUtil.getManager();
         manager.getTransaction().begin();
@@ -32,6 +35,8 @@ public class UserUtil {
         manager.getTransaction().commit();
     }
 
+    /** Inserts the data of a given user into the database
+     * @param user the object to be inserted */
     public static void insert(User user){
         manager = HibernateUtil.getManager();
         manager.getTransaction().begin();
@@ -39,6 +44,8 @@ public class UserUtil {
         manager.getTransaction().commit();
     }
 
+    /** Removes the data of a given user in the database
+     * @param user the object to be removed */
     public static void remove(User user){
         manager = HibernateUtil.getManager();
         manager.getTransaction().begin();
@@ -46,11 +53,17 @@ public class UserUtil {
         manager.getTransaction().commit();
     }
 
+    /** Finds the data of a given user in the database
+     * @param field the primary key of the object
+     * @return the object found */
     public static User findBy(String field){
         manager = HibernateUtil.getManager();
         return manager.find(User.class, field);
     }
 
+    /** Finds the data of a user in the database given its name
+     * @param condition name field of the user
+     * @return list of the objects that satisfy the query */
     public static List<User> queryUserTableByName(String condition){
         EntityManager EM = HibernateUtil.getManager();
         Query q = EM.createQuery(
@@ -60,6 +73,9 @@ public class UserUtil {
         return users;
     }
 
+    /** Finds the data of a user in the database given its email
+     * @param condition email field of the user
+     * @return list of the objects that satisfy the query */
     public static List<User> queryUserTableByEmail(String condition){
         EntityManager EM = HibernateUtil.getManager();
         Query q = EM.createQuery(

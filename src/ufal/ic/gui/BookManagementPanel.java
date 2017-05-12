@@ -15,6 +15,7 @@ import java.awt.event.ActionListener;
 import java.util.Vector;
 
 /**
+ * Book registering pane, which includes a search bar, a book updater tool, and a table of registered books
  * Created by manoel on 02/05/17.
  */
 public class BookManagementPanel extends JPanel {
@@ -65,6 +66,7 @@ public class BookManagementPanel extends JPanel {
         add(split);
     }
 
+    /** Sets up the buttons operations */
     public void setUpButtons(){
         addButton.addActionListener(e -> {
             //TODO: query insert into user table
@@ -91,6 +93,8 @@ public class BookManagementPanel extends JPanel {
             TableUtil.resizeColumnWidth(resultsTable);
         });
     }
+
+    /** Sets up the search bar pane*/
     private class SearchPanel extends JPanel {
 
         private JRadioButton[] radioButtons;
@@ -146,6 +150,7 @@ public class BookManagementPanel extends JPanel {
             add(new Box.Filler(maxSize, maxSize, maxSize));
         }
 
+        /** Search operation logic */
         private void doSearch() {
             String field = GroupButtonUtil.getSelectedButtonText(buttonGroup);
             Book b;
@@ -162,6 +167,7 @@ public class BookManagementPanel extends JPanel {
         }
     }
 
+    /** Sets up the register pane*/
     private class RegisterPanel extends JPanel {
 
         public RegisterPanel(String item, Vector<String> field) {
@@ -201,6 +207,8 @@ public class BookManagementPanel extends JPanel {
             return new Book(bookFields[0],bookFields[1],bookFields[2],bookFields[3], Integer.valueOf(bookFields[4]));
         }
 
+        /** Fills the register pane with the current book
+         * @param book book to have its information retrieved*/
         public void fillMe(Book book){
             String[] bookFields = book.getInfo();
 

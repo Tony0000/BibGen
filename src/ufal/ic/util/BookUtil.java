@@ -15,6 +15,7 @@ public class BookUtil {
     private static EntityManager manager;
     private static Vector<String> columns;
 
+    /** Creates an vector with books header and returns the vector */
     public static Vector<String> getBookColumns(){
         columns = new Vector<>();
         columns.add("ISBN");
@@ -25,6 +26,7 @@ public class BookUtil {
         return columns;
     }
 
+    /** Creates an vector with books header specifically for the rent table and returns the vector */
     public static Vector<String> getRentBookColumns(){
         columns = new Vector<>();
         columns.add("ISBN");
@@ -35,6 +37,8 @@ public class BookUtil {
         return columns;
     }
 
+    /** Updates the data of a given book in the database
+     * @param book the object to be updated */
     public static void update(Book book){
         manager = HibernateUtil.getManager();
         manager.getTransaction().begin();
@@ -42,6 +46,8 @@ public class BookUtil {
         manager.getTransaction().commit();
     }
 
+    /** Inserts the data of a given book into the database
+     * @param book the object to be inserted */
     public static void insert(Book book){
         manager = HibernateUtil.getManager();
         manager.getTransaction().begin();
@@ -49,6 +55,8 @@ public class BookUtil {
         manager.getTransaction().commit();
     }
 
+    /** Removes the data of a given book in the database
+     * @param book the object to be updated */
     public static void remove(Book book){
         manager = HibernateUtil.getManager();
         manager.getTransaction().begin();
@@ -56,11 +64,17 @@ public class BookUtil {
         manager.getTransaction().commit();
     }
 
+    /** Finds the data of a book in the database
+     * @param field the primary key of the object
+     * @return the object found */
     public static Book findBy(String field){
         manager = HibernateUtil.getManager();
         return manager.find(Book.class, field);
     }
 
+    /** Finds the data of a book in the database given its title
+     * @param condition title field of the book
+     * @return list of the objects that satisfy the query */
     public static List<Book> queryBookTableByTitle(String condition){
         EntityManager EM = HibernateUtil.getManager();
         Query q = EM.createQuery(
@@ -71,6 +85,9 @@ public class BookUtil {
         return books;
     }
 
+    /** Finds the data of a book in the database given its title
+     * @param condition author field of the book
+     * @return list of the objects that satisfy the query */
     public static List<Book> queryBookTableByAuthor(String condition){
         EntityManager EM = HibernateUtil.getManager();
         Query q = EM.createQuery(
