@@ -21,7 +21,7 @@ public class BookManagementPanel extends JPanel {
     JPanel leftPane, searchPanel;
     RegisterPanel registerBookPane;
     protected JButton addButton, updateButton, removeButton;
-    JTable resultsTable;
+    public static JTable resultsTable;
     Vector<Vector<String>> data;
 
     public BookManagementPanel() {
@@ -30,6 +30,8 @@ public class BookManagementPanel extends JPanel {
         data = new Vector<>();
         resultsTable = new JTable();
         resultsTable.setEnabled(false);
+        setLayout(new BorderLayout());
+        setBorder(BorderFactory.createEmptyBorder(2,20,20,20));
 
 
         /** Instantiate dependent variables*/
@@ -40,7 +42,6 @@ public class BookManagementPanel extends JPanel {
         leftPane.add(new JScrollPane(resultsTable), BorderLayout.CENTER);
 
         /** Instantiate and setting Data Model for the table*/
-//        resultsTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         TableUtil.buildTableModelB(resultsTable, BookUtil.getBookColumns());
         TableUtil.resizeColumnWidth(resultsTable);
 
@@ -58,9 +59,7 @@ public class BookManagementPanel extends JPanel {
         rightPane.add(registerBookPane);
         rightPane.add(userHandlerButtons);
         JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPane, rightPane);
-        leftPane.setMinimumSize(new Dimension(600, 500));
-        rightPane.setMaximumSize(new Dimension(300, 500));
-        split.setPreferredSize(new Dimension(1000, 500));
+        split.setResizeWeight(0.7);
         split.setOneTouchExpandable(false);
         split.setEnabled(false);
         add(split);

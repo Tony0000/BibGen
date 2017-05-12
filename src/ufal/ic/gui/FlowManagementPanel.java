@@ -23,13 +23,15 @@ import java.util.List;
  * Created by manoel on 02/05/2017.
  */
 public class FlowManagementPanel extends JPanel{
-    JButton rentBook, renewBook, returnBook, scheduleBook;
+    JButton rentBook, renewBook, returnBook, scheduleBook, payPenalty;
     JPanel menuPane, searchPane, tablePane, bookInfo, resultPane;
-    JTable booksRentedTable;
+    public static JTable booksRentedTable;
     User user;
     Book book;
 
     public FlowManagementPanel(){
+
+        setLayout(new BorderLayout());
 
         bookInfo = new RegisterPanel(BookUtil.getBookColumns());
         searchPane = new SearchPanel(new String[]{"enrollment", "ISBN"});
@@ -39,6 +41,7 @@ public class FlowManagementPanel extends JPanel{
         renewBook = scaleDownImage("forward.png");
         returnBook = scaleDownImage("minus.png");
         scheduleBook = scaleDownImage("schedule.png");
+        payPenalty = scaleDownImage("dollar.png");
         setUpButtons();
 
         /** Options menu*/
@@ -48,27 +51,29 @@ public class FlowManagementPanel extends JPanel{
         menuPane.add(returnBook);
         menuPane.add(renewBook);
         menuPane.add(scheduleBook);
+        menuPane.add(payPenalty);
 
         /** Table of books currently rented */
         booksRentedTable = new JTable();
         booksRentedTable.setEnabled(false);
-        //TableUtil.buildTableModelF(booksRentedTable, booksColumns);
         TableUtil.buildTableModelF(booksRentedTable, BookUtil.getRentBookColumns(), new User());
         TableUtil.resizeColumnWidth(booksRentedTable);
 
         tablePane = new JPanel();
+        tablePane.setLayout(new BorderLayout());
         tablePane.add(new JScrollPane(booksRentedTable), BorderLayout.CENTER);
 
         /**Split panes for menu above and list of books plus book rent bellow*/
         JPanel upperPane = new JPanel();
         upperPane.setLayout(new BoxLayout(upperPane, BoxLayout.X_AXIS));
-        Dimension prefSize = new Dimension(300, 50);
+        upperPane.setBorder(BorderFactory.createEmptyBorder(0,20,0,20));
         upperPane.add(searchPane);
         upperPane.add(resultPane);
-        //upperPane.add(new Box.Filler(prefSize, prefSize, prefSize));
         upperPane.add(menuPane);
 
         JSplitPane bottomSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tablePane, bookInfo);
+        bottomSplit.setBorder(BorderFactory.createEmptyBorder(2,20,20,20));
+        bottomSplit.setResizeWeight(0.7);
         bottomSplit.setOneTouchExpandable(false);
         bottomSplit.setEnabled(false);
 
@@ -76,6 +81,7 @@ public class FlowManagementPanel extends JPanel{
         majorSplit.setOneTouchExpandable(false);
         majorSplit.setEnabled(false);
         add(majorSplit);
+        setBackground(Color.orange);
 
     }
 
@@ -127,6 +133,9 @@ public class FlowManagementPanel extends JPanel{
             TableUtil.buildTableModelF(booksRentedTable, BookUtil.getRentBookColumns(), user);
             TableUtil.resizeColumnWidth(booksRentedTable);
             ((RegisterPanel)bookInfo).clear();
+            /** Refreshes all jtables with newer data from database */
+            TableUtil.buildTableModelB(BookManagementPanel.resultsTable, BookUtil.getRentBookColumns());
+            TableUtil.resizeColumnWidth(BookManagementPanel.resultsTable);
             book = null;
         });
 
@@ -138,7 +147,7 @@ public class FlowManagementPanel extends JPanel{
                         .setParameter("user_id", user.getEnrollment())
                         .setParameter("book_id", book.getIsbn());
                 List<UsersBook> ub = q.getResultList();
-                System.out.println(q.getResultList());
+
                 if(ub.size() > 0) {
                     for (UsersBook usersBook : ub) {
                         Date dt = new Date();
@@ -204,6 +213,9 @@ public class FlowManagementPanel extends JPanel{
             TableUtil.buildTableModelF(booksRentedTable, BookUtil.getRentBookColumns(), user);
             TableUtil.resizeColumnWidth(booksRentedTable);
             ((RegisterPanel)bookInfo).clear();
+            /** Refreshes all jtables with newer data from database */
+            TableUtil.buildTableModelB(BookManagementPanel.resultsTable, BookUtil.getRentBookColumns());
+            TableUtil.resizeColumnWidth(BookManagementPanel.resultsTable);
             book = null;
         });
 
@@ -245,7 +257,22 @@ public class FlowManagementPanel extends JPanel{
 
 
         });
-    }    /** Given an input image it will scale it down and set it as an icon for a jbutton
+
+        payPenalty.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(user != null){
+                    user.setPenalty(0);
+                    UserUtil.update(user);
+                    ((ResultPanel)resultPane).setTaxValue("0");
+                }else{
+                    JOptionPane.showMessageDialog(menuPane, "Selecione o usuário e o livro");
+                }
+            }
+        });
+    }
+
+    /** Given an input image it will scale it down and set it as an icon for a jbutton
      * @param imgName image path
      * @return an instance of a button
      * */
@@ -273,29 +300,32 @@ public class FlowManagementPanel extends JPanel{
     }
 
     private class ResultPanel extends JPanel{
+
         JLabel name, taxValue;
+
         public ResultPanel(){
+            setBorder(BorderFactory.createEmptyBorder(0,20,0,20));
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-            setBorder(new TitledBorder("User"));
-            name = new JLabel("Nome: ");
-            taxValue = new JLabel();
-            if(user != null)
-                taxValue.setText("Multa acumulada: R$"+user.getPenalty());
-            else
-                taxValue.setText("Multa acumulada: R$");
+            setPreferredSize(new Dimension(200, 100));
+            setMaximumSize(new Dimension(300, 100));
+            name = new JLabel("Nome: ", SwingConstants.CENTER);
+            taxValue = new JLabel("Multa acumulada: R$ ", SwingConstants.CENTER);
+
+            Dimension maxSize = new Dimension(0, 10);
+            add(new Box.Filler(maxSize, maxSize, maxSize));
             add(name);
+            add(new Box.Filler(maxSize, maxSize, maxSize));
             add(taxValue);
         }
 
-        public void setResultPanel(String username, String tax){
+        public void setName(String username){
             name.setText("Nome: " + username);
-            taxValue.setText("Multa acumulada: R$"+tax);
         }
 
-        public void clearValues(){
-            name.setText("");
-            taxValue.setText("");
+        public void setTaxValue(String tax){
+            taxValue.setText("Multa acumulada: R$ "+tax);
         }
+
     }
 
     private class SearchPanel extends JPanel {
@@ -311,8 +341,8 @@ public class FlowManagementPanel extends JPanel{
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             setBorder(new TitledBorder("Find by:"));
 
-            setPreferredSize(new Dimension(300, 100));
-            setMinimumSize(new Dimension(200, 60));
+            setPreferredSize(new Dimension(200, 100));
+            setMaximumSize(new Dimension(300, 100));
 
             radioPanel = new JPanel(new GridLayout(1, 3));
             radioButtons = new JRadioButton[3];
@@ -355,7 +385,8 @@ public class FlowManagementPanel extends JPanel{
             if (field.equals("enrollment")) {
                 user = UserUtil.findBy(inputText.getText());
                 TableUtil.buildTableModelF(booksRentedTable, BookUtil.getRentBookColumns(), user);
-                ((ResultPanel)resultPane).setResultPanel(user.getName(), user.getPenalty().toString());
+                ((ResultPanel)resultPane).setName(user.getName());
+                ((ResultPanel)resultPane).setTaxValue(user.getPenalty().toString());
             } else if (field.equals("ISBN")) {
                 book = BookUtil.findBy(inputText.getText());
                 ((RegisterPanel)bookInfo).fillMe(book);

@@ -22,7 +22,7 @@ public class MainWindow {
         });
         PanelManager panel = new PanelManager();
         panel.addComponentsToPane(frame.getContentPane());
-        frame.pack();
+        frame.setSize(new Dimension(1000,600));
         frame.setResizable(false);
         frame.setVisible(true);
     }

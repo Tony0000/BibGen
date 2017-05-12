@@ -30,6 +30,8 @@ public class UserManagementPanel extends JPanel {
         data = new Vector<>();
         resultsTable = new JTable();
         resultsTable.setEnabled(false);
+        setLayout(new BorderLayout());
+        setBorder(BorderFactory.createEmptyBorder(2,20,20,20));
 
 
         /** Instantiate dependent variables*/
@@ -59,9 +61,11 @@ public class UserManagementPanel extends JPanel {
         JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPane, rightPane);
         split.setOneTouchExpandable(false);
         split.setEnabled(false);
-        leftPane.setMinimumSize(new Dimension(600,500));
-        rightPane.setMaximumSize(new Dimension(300,300));
-        split.setPreferredSize(new Dimension(1000,500));
+//        leftPane.setMinimumSize(new Dimension(600,500));
+//        rightPane.setMaximumSize(new Dimension(300,300));
+//        split.setPreferredSize(new Dimension(1000,500));
+        split.setResizeWeight(0.7);
+
         add(split);
     }
 

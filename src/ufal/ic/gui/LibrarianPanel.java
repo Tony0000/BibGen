@@ -104,7 +104,7 @@ public class LibrarianPanel extends JPanel{
 
             add(menuButtons);
             Dimension minSize = new Dimension(200, 90);
-            Dimension prefSize = new Dimension(500, 90);
+            Dimension prefSize = new Dimension(400, 90);
             Dimension maxSize = new Dimension(Short.MAX_VALUE, 90);
             add(new Box.Filler(minSize, prefSize, maxSize));
             add(session[4]);
