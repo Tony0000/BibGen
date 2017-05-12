@@ -95,38 +95,41 @@ public class FlowManagementPanel extends JPanel{
                 EntityManager em = HibernateUtil.getManager();
                 // Checa se há livro disponivel
                 if(book.getSamples() > 0) {
-                    // Decrementa a quantidade de livros disponveis
-                    book.setSamples(book.getSamples() - 1);
+                    if(user.getPenalty() < 15){
+                        // Decrementa a quantidade de livros disponveis
+                        book.setSamples(book.getSamples() - 1);
 
-                    // Atribui a relacao de usuario e livro
-                    UsersBook ub = new UsersBook();
-                    ub.setUser(user);
-                    ub.setBook(book);
+                        // Atribui a relacao de usuario e livro
+                        UsersBook ub = new UsersBook();
+                        ub.setUser(user);
+                        ub.setBook(book);
 
-                    // Atualiza data de locacao e entrega
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy");
-                    String date = sdf.format(new Date());
+                        // Atualiza data de locacao e entrega
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy");
+                        String date = sdf.format(new Date());
 
-                    Date dt = null;
-                    try {
-                        dt = sdf.parse(date);
-                    } catch (ParseException e1) {
-                        e1.printStackTrace();
+                        Date dt = null;
+                        try {
+                            dt = sdf.parse(date);
+                        } catch (ParseException e1) {
+                            e1.printStackTrace();
+                        }
+
+                        ub.setDataLocacao(dt);
+                        Calendar c = Calendar.getInstance();
+                        c.setTime(dt);
+                        c.add(Calendar.DATE, 15);
+                        dt = c.getTime();
+                        ub.setDataEntrega(dt);
+
+                        // Finaliza a transacao salvando no banco
+                        em.getTransaction().begin();
+                        em.persist(ub);
+                        em.persist(book);
+                        em.getTransaction().commit();
+                    }else{
+                        JOptionPane.showMessageDialog(this, "Usuario deve primeiro quitar sua multa");
                     }
-
-                    ub.setDataLocacao(dt);
-                    Calendar c = Calendar.getInstance();
-                    c.setTime(dt);
-                    c.add(Calendar.DATE, 15);
-                    dt = c.getTime();
-                    ub.setDataEntrega(dt);
-
-                    // Finaliza a transacao salvando no banco
-                    em.getTransaction().begin();
-                    em.persist(ub);
-                    em.persist(book);
-                    em.getTransaction().commit();
-
                 }else{
                     JOptionPane.showMessageDialog(this, "Não há livros disponíveis");
                 }
@@ -152,27 +155,35 @@ public class FlowManagementPanel extends JPanel{
                         .setParameter("book_id", book.getIsbn());
                 List<UsersBook> ub = q.getResultList();
 
-                if(ub.size() > 0) {
-                    for (UsersBook usersBook : ub) {
-                        Date dt = new Date();
-                        usersBook.setDataLocacao(dt);
-                        System.out.println(dt);
-                        Calendar c = Calendar.getInstance();
-                        c.setTime(dt);
-                        c.add(Calendar.DATE, 15);
-                        dt = c.getTime();
-                        usersBook.setDataEntrega(dt);
-                        System.out.println(dt);
-                        EM.getTransaction().begin();
-                        EM.merge(usersBook);
-                        EM.getTransaction().commit();
-                        JOptionPane.showMessageDialog(this, "Renovado com sucesso");
-                        TableUtil.buildTableModelF(booksRentedTable, BookUtil.getRentBookColumns(), user);
-                        TableUtil.resizeColumnWidth(booksRentedTable);
+                Date dt = new Date();
+                Date dt1 = ub.get(0).getDataEntrega();
+                if(dt.compareTo(dt1) < 0){
+                    if(ub.size() > 0) {
+                        for (UsersBook usersBook : ub) {
+                            usersBook.setDataLocacao(dt);
+
+                            Calendar c = Calendar.getInstance();
+                            c.setTime(dt);
+                            c.add(Calendar.DATE, 15);
+                            dt = c.getTime();
+                            usersBook.setDataEntrega(dt);
+
+                            EM.getTransaction().begin();
+                            EM.merge(usersBook);
+                            EM.getTransaction().commit();
+                            JOptionPane.showMessageDialog(this, "Renovado com sucesso");
+                            TableUtil.buildTableModelF(booksRentedTable, BookUtil.getRentBookColumns(), user);
+                            TableUtil.resizeColumnWidth(booksRentedTable);
+                        }
+                    }else{
+                        JOptionPane.showMessageDialog(this, "Livro Não locado por este usuário");
                     }
                 }else{
-                    JOptionPane.showMessageDialog(this, "Livro Não locado por este usuário");
+                    JOptionPane.showMessageDialog(this, "Prazo de devolução excedido. \n" +
+                            "Devolva-o e tente alugar novamente.");
                 }
+
+
             }else{
                 JOptionPane.showMessageDialog(this, "Selecione o usuário e o livro");
             }
@@ -204,6 +215,8 @@ public class FlowManagementPanel extends JPanel{
                 EM.getTransaction().commit();
                 book.setSamples(book.getSamples()+1);
                 BookUtil.update(book);
+                resultPane.setName(user.getName());
+                ((ResultPanel)resultPane).setTaxValue(user.getPenalty().toString());
                 if(cond){
                     JOptionPane.showMessageDialog(this, "Usuário com Multa");
                 }
@@ -218,13 +231,12 @@ public class FlowManagementPanel extends JPanel{
             TableUtil.resizeColumnWidth(booksRentedTable);
             ((RegisterPanel)bookInfo).clear();
             /** Refreshes all jtables with newer data from database */
-            TableUtil.buildTableModelB(BookManagementPanel.resultsTable, BookUtil.getRentBookColumns());
+            TableUtil.buildTableModelB(BookManagementPanel.resultsTable, BookUtil.getBookColumns());
             TableUtil.resizeColumnWidth(BookManagementPanel.resultsTable);
             book = null;
         });
 
         scheduleBook.addActionListener(e->{
-            //JOptionPane.showMessageDialog(this, "Quero agendar");
             if(user != null && book != null){
                 EntityManager EM = HibernateUtil.getManager();
                 ScheduleBook sb = new ScheduleBook();
@@ -391,9 +403,11 @@ public class FlowManagementPanel extends JPanel{
 
             if (field.equals("enrollment")) {
                 user = UserUtil.findBy(inputText.getText());
-                TableUtil.buildTableModelF(booksRentedTable, BookUtil.getRentBookColumns(), user);
                 resultPane.setName(user.getName());
                 ((ResultPanel)resultPane).setTaxValue(user.getPenalty().toString());
+                TableUtil.buildTableModelF(booksRentedTable, BookUtil.getRentBookColumns(), user);
+                TableUtil.resizeColumnWidth(booksRentedTable);
+
             } else if (field.equals("ISBN")) {
                 book = BookUtil.findBy(inputText.getText());
                 ((RegisterPanel)bookInfo).fillMe(book);

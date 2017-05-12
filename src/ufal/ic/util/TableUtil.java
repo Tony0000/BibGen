@@ -11,6 +11,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
+import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
@@ -41,6 +42,7 @@ public class TableUtil {
             data.add(vector);
         }
 
+        Collections.sort(data, new ColumnSorter(3));
         DefaultTableModel model = new DefaultTableModel(data, columnNames);
         table.setModel(model);
     }
@@ -66,6 +68,7 @@ public class TableUtil {
             data.add(vector);
         }
 
+        Collections.sort(data, new ColumnSorter(2));
         DefaultTableModel model = new DefaultTableModel(data, columnNames);
         table.setModel(model);
     }
@@ -97,6 +100,7 @@ public class TableUtil {
             data.add(vector);
         }
 
+        Collections.sort(data, new ColumnSorter(2));
         DefaultTableModel model = new DefaultTableModel(data, columnNames);
         table.setModel(model);
     }

@@ -4,21 +4,35 @@
 
 ## Description
    BibGen is a acronym of Gerenciador de Bilioteca (Library Management, in english) 
-   and it was made using Java, Swing and JDBC (for the persistence of data).
+    it is made using Java, Swing and Hibernate.
    
-   In its specification, it is supposed to be used by the classes of users:
-   * Library common users
-   * Librarians
-   * Administrators
+   This desktop application must give the librarian operations over the library such as:
+   
+   * Add, update and remove users and books to the system
+   * Search through the users and books entries.
+   * Allow users to rent, renew, return and schedule a rent of books.
+   * Print daily reports 
 
-   The main goal of this project is to obtain grades in Process' Methologies.
+   The goal of this project is to obtain grades in Software Development Process' class.
     
-## Classes
+## Packages
 * Entities
+
+    
     * Book
+    * User
     * Librarian
-    * Constants
+    * UsersBook
+    * ScheduleBook
+    
 * GUI 
+    
+   
     * Main Window - JFrame and the main method
-    * Panel Manager - The handler of the Login and Applcation JPanels
+    * Panel Manager - The handler of the Login and Application JPanels
     * Librarian Panel - JPanel which handles all subpanels after the login
+    * Many subpanels
+    
+* Util
+
+    The utilities for entities and components such as: users, books, tables, columns and hibernate connection.

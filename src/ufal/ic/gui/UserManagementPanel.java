@@ -81,7 +81,6 @@ public class UserManagementPanel extends JPanel {
         updateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO: query update to user table
                 User user = registerUserPane.getFields();
                 UserUtil.update(user);
                 TableUtil.buildTableModelU(resultsTable, UserUtil.getColumns());
@@ -169,7 +168,6 @@ public class UserManagementPanel extends JPanel {
             }
             registerUserPane.fillMe(u);
             inputText.setText("");
-            TableUtil.buildTableModelU(resultsTable, UserUtil.getColumns());
         }
     }
 

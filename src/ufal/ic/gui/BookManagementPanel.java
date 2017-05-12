@@ -69,27 +69,25 @@ public class BookManagementPanel extends JPanel {
     /** Sets up the buttons operations */
     public void setUpButtons(){
         addButton.addActionListener(e -> {
-            //TODO: query insert into user table
             Book book = registerBookPane.getFields();
             BookUtil.insert(book);
+//            JOptionPane.showMessageDialog(this, book.toString());
             ((DefaultTableModel)resultsTable.getModel()).fireTableDataChanged();
-            TableUtil.buildTableModelB(resultsTable, BookUtil.getRentBookColumns());
+            TableUtil.buildTableModelB(resultsTable, BookUtil.getBookColumns());
             TableUtil.resizeColumnWidth(resultsTable);
         });
 
         updateButton.addActionListener(e -> {
-            //TODO: query update to user table
             Book book = registerBookPane.getFields();
             BookUtil.update(book);
-            TableUtil.buildTableModelB(resultsTable, BookUtil.getRentBookColumns());
+            TableUtil.buildTableModelB(resultsTable, BookUtil.getBookColumns());
             TableUtil.resizeColumnWidth(resultsTable);
         });
 
         removeButton.addActionListener(e -> {
-            //TODO: query remove from user table
             Book book = registerBookPane.getFields();
             BookUtil.remove(book);
-            TableUtil.buildTableModelB(resultsTable, BookUtil.getRentBookColumns());
+            TableUtil.buildTableModelB(resultsTable, BookUtil.getBookColumns());
             TableUtil.resizeColumnWidth(resultsTable);
         });
     }
@@ -163,7 +161,6 @@ public class BookManagementPanel extends JPanel {
             }
             registerBookPane.fillMe(b);
             inputText.setText("");
-            TableUtil.buildTableModelB(resultsTable, BookUtil.getRentBookColumns());
         }
     }
 
