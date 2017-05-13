@@ -1,6 +1,7 @@
 package ufal.ic.util;
 
 import ufal.ic.entities.Book;
+import ufal.ic.entities.ScheduleBook;
 import ufal.ic.entities.User;
 import ufal.ic.entities.UsersBook;
 
@@ -97,6 +98,33 @@ public class TableUtil {
             }
             vector.add(usersBook.getDataLocacao().toGMTString().substring(0,11));
             vector.add(usersBook.getDataEntrega().toGMTString().substring(0,11));
+            data.add(vector);
+        }
+
+        Collections.sort(data, new ColumnSorter(2));
+        DefaultTableModel model = new DefaultTableModel(data, columnNames);
+        table.setModel(model);
+    }
+
+    public static void buildTableModelS(JTable table, Vector<String> columnNames, User user) {
+        EntityManager EM = HibernateUtil.getManager();
+        Query q = EM.createQuery(
+                "FROM ScheduleBook WHERE user_id = :user_id")
+                .setParameter("user_id", user.getEnrollment());
+        List<ScheduleBook> listBooks = q.getResultList();
+
+        // number and names of the columns
+        int columnCount = columnNames.size();
+
+        // data of the table
+        Vector<Vector<Object>> data = new Vector<Vector<Object>>();
+        for(ScheduleBook sb : listBooks) {
+            String[] tmp = sb.getBook().getInfo();
+            Vector<Object> vector = new Vector<Object>();
+            for (int columnIndex = 0; columnIndex < columnCount-2; columnIndex++) {
+                vector.add(tmp[columnIndex]);
+            }
+            vector.add(sb.getDataReserva().toGMTString().substring(0,11));
             data.add(vector);
         }
 
