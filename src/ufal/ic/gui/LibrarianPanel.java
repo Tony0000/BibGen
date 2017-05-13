@@ -69,6 +69,11 @@ public class LibrarianPanel extends JPanel{
                     }
                 };
                 button.setIcon(new ImageIcon(scaled));
+                button.setFocusPainted(false);
+                button.setContentAreaFilled(false);
+                button.setBorder(null);
+                button.setMargin(new Insets(0, 0, 0, 0));
+
                 return button;
             } catch (IOException e) {
                 e.printStackTrace();

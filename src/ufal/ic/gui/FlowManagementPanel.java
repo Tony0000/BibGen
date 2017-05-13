@@ -306,8 +306,13 @@ public class FlowManagementPanel extends JPanel{
                     return new Dimension(defaultSize, defaultSize);
                 }
             };
-            button.setBackground(Color.WHITE);
             button.setIcon(new ImageIcon(scaledImg));
+            button.setFocusPainted(false);
+            button.setContentAreaFilled(false);
+            button.setFocusPainted(false);
+            button.setContentAreaFilled(false);
+            button.setBorder(null);
+            button.setMargin(new Insets(0, 0, 0, 0));
             return button;
         } catch (IOException e) {
             e.printStackTrace();
