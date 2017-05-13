@@ -128,14 +128,14 @@ public class FlowManagementPanel extends JPanel{
                         em.persist(book);
                         em.getTransaction().commit();
                     }else{
-                        JOptionPane.showMessageDialog(this, "Usuario deve primeiro quitar sua multa");
+                        JOptionPane.showMessageDialog(this, "User must first take out his ticket");
                     }
                 }else{
-                    JOptionPane.showMessageDialog(this, "Não há livros disponíveis");
+                    JOptionPane.showMessageDialog(this, "There is not available books");
                 }
 
             } else{
-                JOptionPane.showMessageDialog(this, "Selecione o usuário e o livro");
+                JOptionPane.showMessageDialog(this, "No books or user selected");
             }
             TableUtil.buildTableModelF(booksRentedTable, BookUtil.getRentBookColumns(), user);
             TableUtil.resizeColumnWidth(booksRentedTable);
@@ -171,21 +171,21 @@ public class FlowManagementPanel extends JPanel{
                             EM.getTransaction().begin();
                             EM.merge(usersBook);
                             EM.getTransaction().commit();
-                            JOptionPane.showMessageDialog(this, "Renovado com sucesso");
+                            JOptionPane.showMessageDialog(this, "Successfully renewed");
                             TableUtil.buildTableModelF(booksRentedTable, BookUtil.getRentBookColumns(), user);
                             TableUtil.resizeColumnWidth(booksRentedTable);
                         }
                     }else{
-                        JOptionPane.showMessageDialog(this, "Livro Não locado por este usuário");
+                        JOptionPane.showMessageDialog(this, "Book not allocated by this user");
                     }
                 }else{
-                    JOptionPane.showMessageDialog(this, "Prazo de devolução excedido. \n" +
-                            "Devolva-o e tente alugar novamente.");
+                    JOptionPane.showMessageDialog(this, "Return time exceeded. \n" +
+                            "Please return it and try to rent again.");
                 }
 
 
             }else{
-                JOptionPane.showMessageDialog(this, "Selecione o usuário e o livro");
+                JOptionPane.showMessageDialog(this, "No books or user selected");
             }
 
         });
@@ -218,13 +218,13 @@ public class FlowManagementPanel extends JPanel{
                 resultPane.setName(user.getName());
                 ((ResultPanel)resultPane).setTaxValue(user.getPenalty().toString());
                 if(cond){
-                    JOptionPane.showMessageDialog(this, "Usuário com Multa");
+                    JOptionPane.showMessageDialog(this, "User with fine");
                 }
                 else{
-                    JOptionPane.showMessageDialog(this, "Livro devolvido com sucesso!");
+                    JOptionPane.showMessageDialog(this, "Book returned successfully!");
                 }
             }else{
-                JOptionPane.showMessageDialog(this, "Nenhum livro ou usuario selecionado");
+                JOptionPane.showMessageDialog(this, "No books or user selected");
             }
 
             TableUtil.buildTableModelF(booksRentedTable, BookUtil.getRentBookColumns(), user);
@@ -254,7 +254,7 @@ public class FlowManagementPanel extends JPanel{
                                 dt = usersBook.getDataEntrega();
                             }
                         }else{
-                            JOptionPane.showMessageDialog(this, "Há livros Disponíveis");
+                                JOptionPane.showMessageDialog(this, "There is available books");
                             break;
                         }
                     }
@@ -265,10 +265,10 @@ public class FlowManagementPanel extends JPanel{
                     JOptionPane.showMessageDialog(this, "Reservado com sucesso");
 
                 }else{
-                    JOptionPane.showMessageDialog(this, "Há livros Disponíveis");
+                    JOptionPane.showMessageDialog(this, "Reserved successfully");
                 }
             }else{
-                JOptionPane.showMessageDialog(this, "Selecione o usuário e o livro");
+                JOptionPane.showMessageDialog(this, "No books or user selected");
             }
 
 
@@ -282,7 +282,7 @@ public class FlowManagementPanel extends JPanel{
                     UserUtil.update(user);
                     ((ResultPanel)resultPane).setTaxValue("0");
                 }else{
-                    JOptionPane.showMessageDialog(menuPane, "Selecione o usuário e o livro");
+                    JOptionPane.showMessageDialog(menuPane, "No books or user selected");
                 }
             }
         });
@@ -330,8 +330,8 @@ public class FlowManagementPanel extends JPanel{
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             setPreferredSize(new Dimension(200, 100));
             setMaximumSize(new Dimension(300, 100));
-            name = new JLabel("Nome: ", SwingConstants.CENTER);
-            taxValue = new JLabel("Multa acumulada: R$ ", SwingConstants.CENTER);
+            name = new JLabel("Name: ", SwingConstants.CENTER);
+            taxValue = new JLabel("Fine: R$ ", SwingConstants.CENTER);
 
             Dimension maxSize = new Dimension(0, 10);
             add(new Box.Filler(maxSize, maxSize, maxSize));
@@ -341,11 +341,11 @@ public class FlowManagementPanel extends JPanel{
         }
 
         public void setName(String username){
-            name.setText("Nome: " + username);
+            name.setText("Name: " + username);
         }
 
         public void setTaxValue(String tax){
-            taxValue.setText("Multa acumulada: R$ "+tax);
+            taxValue.setText("Fine: R$ "+tax);
         }
 
     }
@@ -392,7 +392,7 @@ public class FlowManagementPanel extends JPanel{
                 }
             });
             inputText.setMaximumSize(new Dimension(400, 60));
-            confirm = new JButton("Confirmar");
+            confirm = new JButton("Confirm");
             confirm.setAlignmentX(this.CENTER_ALIGNMENT);
             confirm.addActionListener(e -> {
                 doSearch();

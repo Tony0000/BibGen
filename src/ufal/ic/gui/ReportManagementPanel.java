@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * Created by manoel on 05/05/2017.
@@ -33,7 +34,8 @@ import java.util.List;
 public class ReportManagementPanel extends JPanel{
 
     JLabel qtUsers, userWithPenaltys, qtRentedBooks, qtBooks;
-    public static JTable booksScheduleTable;
+    public static JTable usersDebtors;
+    private static Vector<String> columns;
     JSplitPane majorSplit;
 
     public ReportManagementPanel() {
@@ -42,21 +44,28 @@ public class ReportManagementPanel extends JPanel{
         Date date = Calendar.getInstance().getTime();
         TitledBorder border = BorderFactory.createTitledBorder(
                 new EmptyBorder(0,50,20,50),
-                "Data de emissão: "+date.toGMTString().substring(0,11));
+                "Date of issue: "+date.toGMTString().substring(0,11));
         border.setTitleColor(Color.RED);
         border.setTitleFont(Font.getFont(Font.SERIF));
         setBorder(border);
 
-        qtUsers = new JLabel("Quantidade de Usuários:");
-        userWithPenaltys = new JLabel("Quantidade de Usuários com Multa:");
-        qtRentedBooks = new JLabel("Quantidade de Livros Locados:");
-        qtBooks = new JLabel("Quantidade de Livros:");
+        qtUsers = new JLabel("Number of users:");
+        userWithPenaltys = new JLabel("Number of users with a fine:");
+        qtRentedBooks = new JLabel("Number of rented books:");
+        qtBooks = new JLabel("Number of books:");
         JPanel leftPane = new JPanel();
 
-        booksScheduleTable = new JTable();
-        booksScheduleTable.setEnabled(false);
-        TableUtil.buildTableModelB(booksScheduleTable, BookUtil.getBookColumns());
-        TableUtil.resizeColumnWidth(booksScheduleTable);
+        columns = new Vector<>();
+        columns.add("Enrollment");
+        columns.add("Name");
+        columns.add("Email");
+        columns.add("Course");
+        columns.add("Fine");
+
+        usersDebtors = new JTable();
+        usersDebtors.setEnabled(false);
+        TableUtil.buildTableModelS(usersDebtors, columns);
+        TableUtil.resizeColumnWidth(usersDebtors);
 
         Dimension prefSize = new Dimension(0, 10);
 
@@ -91,7 +100,7 @@ public class ReportManagementPanel extends JPanel{
         upperPane.setEnabled(false);
         upperPane.setDividerLocation(0.9);
 
-        majorSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, upperPane, new JScrollPane(booksScheduleTable));
+        majorSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, upperPane, new JScrollPane(usersDebtors));
         majorSplit.setBorder(BorderFactory.createEmptyBorder(2,20,20,20));
         majorSplit.setResizeWeight(0.0);
         majorSplit.setOneTouchExpandable(false);

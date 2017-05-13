@@ -104,7 +104,7 @@ public class BookManagementPanel extends JPanel {
         public SearchPanel(Vector<String> items, int n) {
             /**Variables instantiation*/
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-            setBorder(new TitledBorder("Buscar por: "));
+            setBorder(new TitledBorder("Find by: "));
             setPreferredSize(new Dimension(300, 70));
             setMinimumSize(new Dimension(200, 60));
 
@@ -131,7 +131,7 @@ public class BookManagementPanel extends JPanel {
                     doSearch();
                 }
             });
-            confirm = new JButton("Confirmar");
+            confirm = new JButton("Confirm");
             confirm.setAlignmentX(this.CENTER_ALIGNMENT);
             confirm.addActionListener(e -> {
                 doSearch();

@@ -138,7 +138,7 @@ public class UserManagementPanel extends JPanel {
                     doSearch();
                 }
             });
-            confirm = new JButton("Confirmar");
+            confirm = new JButton("Confirm");
             confirm.setAlignmentX(this.CENTER_ALIGNMENT);
             confirm.addActionListener(e -> {
                 doSearch();
