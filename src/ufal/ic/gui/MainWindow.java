@@ -1,9 +1,12 @@
 package ufal.ic.gui;
 
+import de.javasoft.plaf.synthetica.SyntheticaAluOxideLookAndFeel;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.text.ParseException;
 
 public class MainWindow {
 
@@ -11,6 +14,13 @@ public class MainWindow {
     /** Prepares the jframe and its main panel*/
     private void prepareGUI(){
         frame = new JFrame("BibGen");
+        try {
+            UIManager.setLookAndFeel(new SyntheticaAluOxideLookAndFeel());
+        } catch (UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         /** Size and positioning*/
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setLocation((int)dim.getWidth()>>3, (int)dim.getHeight()>>6);
@@ -22,7 +32,7 @@ public class MainWindow {
         });
         PanelManager panel = new PanelManager();
         panel.addComponentsToPane(frame.getContentPane());
-        frame.setSize(new Dimension(1000,600));
+        frame.setSize(new Dimension(1000,700));
         frame.setResizable(false);
         frame.setVisible(true);
     }

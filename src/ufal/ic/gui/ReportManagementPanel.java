@@ -43,9 +43,7 @@ public class ReportManagementPanel extends JPanel{
 
         setLayout(new BorderLayout());
         Date date = Calendar.getInstance().getTime();
-        TitledBorder border = BorderFactory.createTitledBorder(
-                new EmptyBorder(0,50,20,50),
-                "Date of issue: "+date.toGMTString().substring(0,11));
+        TitledBorder border = new TitledBorder("Date of issue: "+date.toGMTString().substring(0,11));
         border.setTitleColor(Color.RED);
         border.setTitleFont(Font.getFont(Font.SERIF));
         setBorder(border);

@@ -2,6 +2,7 @@ package ufal.ic.gui;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -113,6 +114,7 @@ public class LibrarianPanel extends JPanel{
                 menuButtons.add(session[i]);
             }
 
+            menuButtons.setBorder(new TitledBorder(""));
             add(menuButtons);
             Dimension minSize = new Dimension(200, 90);
             Dimension prefSize = new Dimension(400, 90);

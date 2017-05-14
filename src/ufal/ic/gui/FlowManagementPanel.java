@@ -39,6 +39,7 @@ public class FlowManagementPanel extends JPanel{
         bookInfo = new RegisterPanel(BookUtil.getBookColumns());
         searchPane = new SearchPanel(new String[]{"enrollment", "ISBN"});
         resultPane = new ResultPanel();
+//        resultPane.setBorder(new TitledBorder(""));
         /** Buttons for the options menu*/
         rentBook = scaleDownImage("plus.png");
         renewBook = scaleDownImage("forward.png");
@@ -50,6 +51,7 @@ public class FlowManagementPanel extends JPanel{
         /** Options menu*/
         menuPane = new JPanel();
         menuPane.setLayout(new BoxLayout(menuPane, BoxLayout.X_AXIS));
+        menuPane.setBorder(new TitledBorder(""));
         menuPane.add(rentBook);
         menuPane.add(returnBook);
         menuPane.add(renewBook);
@@ -84,8 +86,6 @@ public class FlowManagementPanel extends JPanel{
         majorSplit.setOneTouchExpandable(false);
         majorSplit.setEnabled(false);
         add(majorSplit);
-        setBackground(Color.orange);
-
     }
 
     /** Sets up the buttons operations */

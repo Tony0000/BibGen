@@ -3,18 +3,44 @@
 ![BibGen](bibgen.png)</br>
 
 ## Description
-   BibGen is a acronym of Gerenciador de Bilioteca (Library Management, in english) 
-    it is made using Java, Swing and Hibernate.
-   
+   BibGen is the acronym of Gerenciador de Biblioteca (Library Management, in english).
    This desktop application must give the librarian operations over the library such as:
    
-   * Add, update and remove users and books to the system
+   * Add, update and remove users and books in the system
    * Search through the users and books entries.
-   * Allow users to rent, renew, return and schedule a rent of books.
-   * Print daily reports 
+   * Allow users to rent, renew, return and schedule books.
+   * Print daily reports. 
 
    The goal of this project is to obtain grades in Software Development Process' class.
     
+## Requirements
+```xml
+<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-entitymanager -->
+<dependency>
+    <groupId>org.hibernate</groupId>
+    <artifactId>hibernate-entitymanager</artifactId>
+    <version>5.0.1.Final</version>
+</dependency>
+```
+
+```xml
+<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>5.1.41</version>
+</dependency>
+```
+
+```xml
+<!-- https://mvnrepository.com/artifact/com.itextpdf/itextpdf -->
+<dependency>
+    <groupId>com.itextpdf</groupId>
+    <artifactId>itextpdf</artifactId>
+    <version>5.4.1</version>
+</dependency>
+```
+
 ## Packages
 * Entities
 
