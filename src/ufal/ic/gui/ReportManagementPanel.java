@@ -6,7 +6,7 @@ import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.PdfWriter;
 import ufal.ic.entities.Book;
 import ufal.ic.entities.User;
-import ufal.ic.util.BookUtil;
+import ufal.ic.entities.UsersBook;
 import ufal.ic.util.HibernateUtil;
 import ufal.ic.util.TableUtil;
 
@@ -23,6 +23,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -33,7 +34,7 @@ import java.util.Vector;
  */
 public class ReportManagementPanel extends JPanel{
 
-    JLabel qtUsers, userWithPenaltys, qtRentedBooks, qtBooks;
+    JLabel qtUsers, userWithPenaltys, qtRentedBooks, qtBooks, amtFine;
     public static JTable usersDebtors;
     private static Vector<String> columns;
     JSplitPane majorSplit;
@@ -53,6 +54,7 @@ public class ReportManagementPanel extends JPanel{
         userWithPenaltys = new JLabel("Number of users with a fine:");
         qtRentedBooks = new JLabel("Number of rented books:");
         qtBooks = new JLabel("Number of books:");
+        amtFine = new JLabel("Amount of Fine: R$ ");
         JPanel leftPane = new JPanel();
 
         columns = new Vector<>();
@@ -79,6 +81,8 @@ public class ReportManagementPanel extends JPanel{
         leftPane.add(qtRentedBooks);
         leftPane.add(new Box.Filler(prefSize, prefSize, prefSize));
         leftPane.add(qtBooks);
+        leftPane.add(new Box.Filler(prefSize, prefSize, prefSize));
+        leftPane.add(amtFine);
 
         final JPanel p = this;
         JButton b = scaleDownImage("pdf.png");
@@ -127,15 +131,29 @@ public class ReportManagementPanel extends JPanel{
         List<User> allUsersPenalty = queryUserWithPenaltys.getResultList();
         userWithPenaltys.setText(userWithPenaltys.getText() + " " + allUsersPenalty.size());
 
+        int sum = 0;
+        for(User u : allUsersPenalty){
+            sum += u.getPenalty();
+        }
+        amtFine.setText(amtFine.getText() + sum);
+
         Query queryQtBooks= EM.createQuery(
                 "FROM Book");
         List<Book> allBooks = queryQtBooks.getResultList();
         qtBooks.setText(qtBooks.getText() + " " + allBooks.size());
 
+
+        LocalDate dateTime = LocalDate.now();
         Query queryQtRentedBooks= EM.createQuery(
-                "FROM UsersBook");
-        List<Book> allRentedBooks = queryQtRentedBooks.getResultList();
+                "FROM UsersBook WHERE datalocacao = :dataLocacao")
+                .setParameter("dataLocacao", dateTime);
+
+        List<UsersBook> allRentedBooks = queryQtRentedBooks.getResultList();
+
         qtRentedBooks.setText(qtRentedBooks.getText() + " " + allRentedBooks.size());
+
+
+
 
     }
 
