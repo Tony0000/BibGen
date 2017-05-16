@@ -41,6 +41,8 @@
 </dependency>
 ```
 
+And also Oxyde theme.
+
 ## Packages
 * Entities
 
