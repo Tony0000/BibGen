@@ -14,6 +14,7 @@ public class BookUtil {
 
     private static EntityManager manager;
     private static Vector<String> columns;
+    public static final int SEARCHABLE_FIELDS = 3;
 
     /** Creates an vector with books header and returns the vector */
     public static Vector<String> getBookColumns(){
@@ -75,26 +76,12 @@ public class BookUtil {
     /** Finds the data of a book in the database given its title
      * @param condition title field of the book
      * @return list of the objects that satisfy the query */
-    public static List<Book> queryBookTableByTitle(String condition){
+    public static Book queryByField(String identifier, String condition){
         EntityManager EM = HibernateUtil.getManager();
-        Query q = EM.createQuery(
-                "FROM Book WHERE title = :book_id");
-        q.setParameter("book_id", condition);
-        List<Book> books = q.getResultList();
-        System.out.println(books.size());
-        return books;
-    }
 
-    /** Finds the data of a book in the database given its title
-     * @param condition author field of the book
-     * @return list of the objects that satisfy the query */
-    public static List<Book> queryBookTableByAuthor(String condition){
-        EntityManager EM = HibernateUtil.getManager();
-        Query q = EM.createQuery(
-                "FROM Book WHERE author = :book_id");
-        q.setParameter("book_id", condition);
+        Query q = EM.createNamedQuery(identifier, Book.class)
+                .setParameter("book_id", condition);
         List<Book> books = q.getResultList();
-        System.out.println(books.size());
-        return books;
+        return books.get(0);
     }
 }

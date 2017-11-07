@@ -6,8 +6,6 @@ import ufal.ic.util.LibrarianUtil;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * Created by manoel on 30/04/2017.
@@ -33,13 +31,10 @@ public class LoginPanel extends JPanel {
         userInput.setColumns(20);
         passInput.setColumns(20);
         passInput.setEchoChar('*');
-        passInput.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                tryLogin();
-            }
-        });
+        passInput.addActionListener(e -> tryLogin());
         loginButton = new JButton("Login");
+        loginButton.setBackground(Color.RED);
+        loginButton.setForeground(Color.BLACK);
         loginButton.addActionListener(e -> {
             tryLogin();
         });
@@ -52,7 +47,7 @@ public class LoginPanel extends JPanel {
             Librarian login = LibrarianUtil.findBy(userInput.getText());
             if(login != null) {
                 System.out.println(passInput.getPassword());
-                if (login.getSenha().equals(passInput.getText())) {
+                if (login.getSenha().equals(String.valueOf(passInput.getPassword()))) {
                     CardLayout cl = (CardLayout) reference.getLayout();
                     cl.show(reference, PanelManager.MAINSCREEN);
                 }else{

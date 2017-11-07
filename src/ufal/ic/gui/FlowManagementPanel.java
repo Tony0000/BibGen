@@ -18,6 +18,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
+import ufal.ic.entities.Book;
+import ufal.ic.entities.User;
+import ufal.ic.util.BookUtil;
+import ufal.ic.util.SearchFlowLogic;
 
 /**
  * Flow Pane of rented, returned, overdue and scheduled books information of a given user
@@ -25,9 +29,10 @@ import java.util.List;
  * a table of registered books to a given user.
  * Created by manoel on 02/05/2017.
  */
-public class FlowManagementPanel extends JPanel{
+public class FlowManagementPanel extends JPanel implements SearchablePanel{
     JButton rentBook, renewBook, returnBook, scheduleBook, payPenalty;
-    JPanel menuPane, searchPane, tablePane, bookInfo, resultPane;
+    JPanel menuPane, tablePane, bookInfo, resultPane, upperPane;
+    SearchFlowLogic searchLogic;
     public static JTable booksRentedTable;
     User user;
     Book book;
@@ -37,9 +42,12 @@ public class FlowManagementPanel extends JPanel{
         setLayout(new BorderLayout());
 
         bookInfo = new RegisterPanel(BookUtil.getBookColumns());
-        searchPane = new SearchPanel(new String[]{"enrollment", "ISBN"});
+        Vector<String> fields = new Vector<>();
+        fields.add("enrollment");
+        fields.add("ISBN");
+        searchLogic = new SearchFlowLogic();
         resultPane = new ResultPanel();
-//        resultPane.setBorder(new TitledBorder(""));
+
         /** Buttons for the options menu*/
         rentBook = scaleDownImage("plus.png");
         renewBook = scaleDownImage("forward.png");
@@ -69,10 +77,12 @@ public class FlowManagementPanel extends JPanel{
         tablePane.add(new JScrollPane(booksRentedTable), BorderLayout.CENTER);
 
         /**Split panes for menu above and list of books plus book rent bellow*/
-        JPanel upperPane = new JPanel();
+        upperPane = new JPanel();
         upperPane.setLayout(new BoxLayout(upperPane, BoxLayout.X_AXIS));
         upperPane.setBorder(BorderFactory.createEmptyBorder(0,20,0,20));
-        upperPane.add(searchPane);
+        SearchPanel p = new SearchPanel(this, fields, 2);
+        searchLogic.setPanel(p);
+        upperPane.add(searchLogic.getSearchPanel());
         upperPane.add(resultPane);
         upperPane.add(menuPane);
 
@@ -320,8 +330,25 @@ public class FlowManagementPanel extends JPanel{
         return null;
     }
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        String stringData = SearchFlowLogic.doSearch();
+        if(!stringData.isEmpty()){
+            String[] data = stringData.split(",");
+            if(data[data.length-1].equals("b")){
+                book = new Book(data[0],data[1],data[2], data[3], Integer.valueOf(data[4]));
+                ((RegisterPanel)bookInfo).fillMe(book);
+            }else if(data[data.length-1].equals("u")){
+                user = new User(data[0],data[1],data[2],data[3]);
+                resultPane.setName(user.getName());
+                ((ResultPanel)resultPane).setTaxValue(user.getPenalty().toString());
+            }
+
+        }
+    }
+
     /** Sets up the result pane*/
-    private class ResultPanel extends JPanel{
+    public class ResultPanel extends JPanel{
 
         JLabel name, taxValue;
 
@@ -348,77 +375,6 @@ public class FlowManagementPanel extends JPanel{
             taxValue.setText("Fine: R$ "+tax);
         }
 
-    }
-
-    /** Sets up the search bar pane*/
-    private class SearchPanel extends JPanel {
-
-        private JRadioButton[] radioButtons;
-        private JTextField inputText;
-        private ButtonGroup buttonGroup;
-        private JPanel radioPanel;
-        private JButton confirm;
-
-        SearchPanel(String[] item) {
-            /**Variables instantiation*/
-            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-            setBorder(new TitledBorder("Find by:"));
-
-            setPreferredSize(new Dimension(200, 100));
-            setMaximumSize(new Dimension(300, 100));
-
-            radioPanel = new JPanel(new GridLayout(1, 3));
-            radioButtons = new JRadioButton[3];
-            buttonGroup = new ButtonGroup();
-
-            /** Selectable options for search bar and set the one selected by default.
-             * Then group and addButton them to the panel.*/
-            for (int i = 0; i < item.length; i++) {
-                radioButtons[i] = new JRadioButton(item[i]);
-            }
-            radioButtons[0].setSelected(true);
-
-            for (int i = 0; i < item.length; i++)
-                buttonGroup.add(radioButtons[i]);
-
-            for (int i = 0; i < item.length; i++)
-                radioPanel.add(radioButtons[i]);
-
-            inputText = new JTextField();
-            inputText.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    doSearch();
-                }
-            });
-            inputText.setMaximumSize(new Dimension(400, 60));
-            confirm = new JButton("Confirm");
-            confirm.setAlignmentX(this.CENTER_ALIGNMENT);
-            confirm.addActionListener(e -> {
-                doSearch();
-            });
-            add(radioPanel);
-            add(inputText);
-            add(confirm);
-        }
-
-        /** Search operation logic */
-        private void doSearch() {
-            String field = GroupButtonUtil.getSelectedButtonText(buttonGroup);
-
-            if (field.equals("enrollment")) {
-                user = UserUtil.findBy(inputText.getText());
-                resultPane.setName(user.getName());
-                ((ResultPanel)resultPane).setTaxValue(user.getPenalty().toString());
-                TableUtil.buildTableModelF(booksRentedTable, BookUtil.getRentBookColumns(), user);
-                TableUtil.resizeColumnWidth(booksRentedTable);
-
-            } else if (field.equals("ISBN")) {
-                book = BookUtil.findBy(inputText.getText());
-                ((RegisterPanel)bookInfo).fillMe(book);
-            }
-            inputText.setText("");
-        }
     }
 
     /** Sets up the register pane*/

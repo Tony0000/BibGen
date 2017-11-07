@@ -8,6 +8,10 @@ import java.util.List;
  */
 @Entity
 @Table(name = "BOOK")
+@NamedQueries({
+        @NamedQuery(name="title", query="FROM Book WHERE title = :book_id"),
+        @NamedQuery(name="author", query="FROM Book WHERE author = :book_id")
+})
 public class Book {
 
     @Id
@@ -97,7 +101,7 @@ public class Book {
 
     @Override
     public String toString(){
-        return "ISBN: "+getIsbn()+"\nTitle: "+getTitle()+"\nAuthor: "+getAuthor()
-                +"\nPublisher: "+getPublisher()+"\nSamples: "+getSamples();
+        return getIsbn()+","+getTitle()+","+getAuthor()
+                +","+getPublisher()+","+getSamples();
     }
 }

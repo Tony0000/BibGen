@@ -2,7 +2,7 @@ package ufal.ic.gui;
 
 import ufal.ic.entities.Book;
 import ufal.ic.util.BookUtil;
-import ufal.ic.util.GroupButtonUtil;
+import ufal.ic.util.SearchBookLogic;
 import ufal.ic.util.SpringUtilities;
 import ufal.ic.util.TableUtil;
 
@@ -11,15 +11,15 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Vector;
 
 /**
  * Book registering pane, which includes a search bar, a book updater tool, and a table of registered books
  * Created by manoel on 02/05/17.
  */
-public class BookManagementPanel extends JPanel {
-    JPanel leftPane, searchPanel;
+public class BookManagementPanel extends JPanel implements SearchablePanel{
+    SearchBookLogic searchLogic;
+    JPanel leftPane, rightPane, userHandlerButtons;
     RegisterPanel registerBookPane;
     protected JButton addButton, updateButton, removeButton;
     public static JTable resultsTable;
@@ -39,7 +39,7 @@ public class BookManagementPanel extends JPanel {
         registerBookPane = new RegisterPanel("books", BookUtil.getBookColumns());
         registerBookPane.setPreferredSize(new Dimension(300,300));
         leftPane = new JPanel(new GridLayout());
-        searchPanel = new SearchPanel(BookUtil.getBookColumns(), 3);
+        searchLogic = new SearchBookLogic(new SearchPanel(this, BookUtil.getBookColumns(), BookUtil.SEARCHABLE_FIELDS));
         leftPane.add(new JScrollPane(resultsTable), BorderLayout.CENTER);
 
         /** Instantiate and setting Data Model for the table*/
@@ -50,13 +50,13 @@ public class BookManagementPanel extends JPanel {
         updateButton = new JButton("Update");
         removeButton = new JButton("Remove");
         setUpButtons();
-        JPanel userHandlerButtons = new JPanel();
+        userHandlerButtons = new JPanel();
         userHandlerButtons.add(addButton);
         userHandlerButtons.add(updateButton);
         userHandlerButtons.add(removeButton);
 
-        JPanel rightPane = new JPanel(new GridLayout(3, 1));
-        rightPane.add(searchPanel);
+        rightPane = new JPanel(new GridLayout(3, 1));
+        rightPane.add(searchLogic.getSearchPanel());
         rightPane.add(registerBookPane);
         rightPane.add(userHandlerButtons);
         JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPane, rightPane);
@@ -92,76 +92,11 @@ public class BookManagementPanel extends JPanel {
         });
     }
 
-    /** Sets up the search bar pane*/
-    private class SearchPanel extends JPanel {
-
-        private JRadioButton[] radioButtons;
-        private JTextField inputText;
-        private ButtonGroup buttonGroup;
-        private JPanel radioPanel;
-        private JButton confirm;
-
-        public SearchPanel(Vector<String> items, int n) {
-            /**Variables instantiation*/
-            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-            setBorder(new TitledBorder("Find by: "));
-            setPreferredSize(new Dimension(300, 70));
-            setMinimumSize(new Dimension(200, 60));
-
-            radioPanel = new JPanel(new GridLayout(1, 3));
-            radioButtons = new JRadioButton[3];
-            buttonGroup = new ButtonGroup();
-
-            /** Selectable options for search bar and set the one selected by default. Then group and addButton them to the panel.*/
-            for (int i = 0; i < n; i++) {
-                radioButtons[i] = new JRadioButton(items.get(i));
-            }
-            radioButtons[0].setSelected(true);
-
-            for (int i = 0; i < n; i++)
-                buttonGroup.add(radioButtons[i]);
-
-            for (int i = 0; i < n; i++)
-                radioPanel.add(radioButtons[i]);
-
-            inputText = new JTextField();
-            inputText.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    doSearch();
-                }
-            });
-            confirm = new JButton("Confirm");
-            confirm.setAlignmentX(this.CENTER_ALIGNMENT);
-            confirm.addActionListener(e -> {
-                doSearch();
-            });
-
-            Dimension minSize = new Dimension(20, 20);
-            Dimension prefSize = new Dimension(20, 50);
-            Dimension maxSize = new Dimension(Short.MAX_VALUE, 100);
-            add(new Box.Filler(minSize, minSize, minSize));
-            add(radioPanel);
-            add(inputText);
-            add(new Box.Filler(minSize, prefSize, prefSize));
-            add(confirm);
-            add(new Box.Filler(maxSize, maxSize, maxSize));
-        }
-
-        /** Search operation logic */
-        private void doSearch() {
-            String field = GroupButtonUtil.getSelectedButtonText(buttonGroup);
-            Book b;
-            if(field.equals("ISBN")){
-                b = BookUtil.findBy(inputText.getText());
-            }else if(field.equals("Title")){
-                b = BookUtil.queryBookTableByTitle(inputText.getText()).get(0);
-            }else{
-                b = BookUtil.queryBookTableByAuthor(inputText.getText()).get(0);
-            }
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Book b = SearchBookLogic.doSearch();
+        if(b!=null)
             registerBookPane.fillMe(b);
-            inputText.setText("");
-        }
     }
 
     /** Sets up the register pane*/

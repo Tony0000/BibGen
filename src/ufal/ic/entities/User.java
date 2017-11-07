@@ -8,6 +8,10 @@ import java.util.List;
  */
 @Entity
 @Table(name = "USER")
+@NamedQueries({
+        @NamedQuery(name="name", query="FROM User WHERE name = :user_id"),
+        @NamedQuery(name="email", query="FROM User WHERE email = :user_id")
+})
 public class User {
 
     @Id
@@ -90,7 +94,7 @@ public class User {
 
 
     @Override
-    public String toString(){return "Name: "+getName()+"\nMatricula: "+getEnrollment()+"\nEmail: "+ getEmail()+"\nPeriodo: "+ getCourse();}
+    public String toString(){return getName()+","+getEnrollment()+","+ getEmail()+","+ getCourse();}
 
     public String[] getInfo(){
         String[] fields = new String[5];

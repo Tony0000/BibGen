@@ -15,6 +15,7 @@ public class UserUtil {
 
     private static EntityManager manager;
     private static Vector<String> userColumns;
+    public static final int SEARCHABLE_FIELDS = 3;
 
     /** Creates an vector with users header and returns the vector */
     public static Vector<String> getColumns(){
@@ -61,28 +62,12 @@ public class UserUtil {
         return manager.find(User.class, field);
     }
 
-    /** Finds the data of a user in the database given its name
-     * @param condition name field of the user
-     * @return list of the objects that satisfy the query */
-    public static List<User> queryUserTableByName(String condition){
+    public static User queryByField(String identifier, String condition){
         EntityManager EM = HibernateUtil.getManager();
-        Query q = EM.createQuery(
-                "FROM User WHERE name = :user_id");
-        q.setParameter("user_id", condition);
-        List<User> users = q.getResultList();
-        return users;
-    }
 
-    /** Finds the data of a user in the database given its email
-     * @param condition email field of the user
-     * @return list of the objects that satisfy the query */
-    public static List<User> queryUserTableByEmail(String condition){
-        EntityManager EM = HibernateUtil.getManager();
-        Query q = EM.createQuery(
-                "FROM User WHERE email = :user_id");
-        q.setParameter("user_id", condition);
+        Query q = EM.createNamedQuery(identifier, User.class)
+                .setParameter("user_id", condition);
         List<User> users = q.getResultList();
-        return users;
+        return users.get(0);
     }
-
 }
