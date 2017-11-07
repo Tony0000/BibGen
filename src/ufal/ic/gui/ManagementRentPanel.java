@@ -20,8 +20,8 @@ import java.util.*;
 import java.util.List;
 import ufal.ic.entities.Book;
 import ufal.ic.entities.User;
-import ufal.ic.util.BookUtil;
-import ufal.ic.util.SearchFlowLogic;
+import ufal.ic.util.JPABook;
+import ufal.ic.util.SearchRentLogic;
 
 /**
  * Flow Pane of rented, returned, overdue and scheduled books information of a given user
@@ -29,23 +29,23 @@ import ufal.ic.util.SearchFlowLogic;
  * a table of registered books to a given user.
  * Created by manoel on 02/05/2017.
  */
-public class FlowManagementPanel extends JPanel implements SearchablePanel{
+public class ManagementRentPanel extends JPanel implements SearchablePanel {
     JButton rentBook, renewBook, returnBook, scheduleBook, payPenalty;
     JPanel menuPane, tablePane, bookInfo, resultPane, upperPane;
-    SearchFlowLogic searchLogic;
+    SearchRentLogic searchLogic;
     public static JTable booksRentedTable;
     User user;
     Book book;
 
-    public FlowManagementPanel(){
+    public ManagementRentPanel(){
 
         setLayout(new BorderLayout());
 
-        bookInfo = new RegisterPanel(BookUtil.getBookColumns());
+        bookInfo = new RegisterPanel(JPABook.getBookColumns());
         Vector<String> fields = new Vector<>();
         fields.add("enrollment");
         fields.add("ISBN");
-        searchLogic = new SearchFlowLogic();
+        searchLogic = new SearchRentLogic();
         resultPane = new ResultPanel();
 
         /** Buttons for the options menu*/
@@ -69,7 +69,7 @@ public class FlowManagementPanel extends JPanel implements SearchablePanel{
         /** Table of books currently rented */
         booksRentedTable = new JTable();
         booksRentedTable.setEnabled(false);
-        TableUtil.buildTableModelF(booksRentedTable, BookUtil.getRentBookColumns(), new User());
+        TableUtil.buildTableModelF(booksRentedTable, JPABook.getRentBookColumns(), new User());
         TableUtil.resizeColumnWidth(booksRentedTable);
 
         tablePane = new JPanel();
@@ -102,7 +102,7 @@ public class FlowManagementPanel extends JPanel implements SearchablePanel{
     private void setUpButtons() {
         rentBook.addActionListener(e->{
             if(user != null && book != null){
-                EntityManager em = HibernateUtil.getManager();
+                EntityManager em = JPAClient.getSessionManager();
                 // Checa se há livro disponivel
                 if(book.getSamples() > 0) {
                     if(user.getPenalty() < 15){
@@ -147,18 +147,18 @@ public class FlowManagementPanel extends JPanel implements SearchablePanel{
             } else{
                 JOptionPane.showMessageDialog(this, "No books or user selected");
             }
-            TableUtil.buildTableModelF(booksRentedTable, BookUtil.getRentBookColumns(), user);
+            TableUtil.buildTableModelF(booksRentedTable, JPABook.getRentBookColumns(), user);
             TableUtil.resizeColumnWidth(booksRentedTable);
             ((RegisterPanel)bookInfo).clear();
             /** Refreshes all jtables with newer data from database */
-            TableUtil.buildTableModelB(BookManagementPanel.resultsTable, BookUtil.getRentBookColumns());
-            TableUtil.resizeColumnWidth(BookManagementPanel.resultsTable);
+            TableUtil.buildTableModelB(ManagementBookPanel.resultsTable, JPABook.getRentBookColumns());
+            TableUtil.resizeColumnWidth(ManagementBookPanel.resultsTable);
             book = null;
         });
 
         renewBook.addActionListener(e->{
             if(user != null && book != null){
-                EntityManager EM = HibernateUtil.getManager();
+                EntityManager EM = JPAClient.getSessionManager();
                 Query q = EM.createQuery(
                         "FROM UsersBook WHERE user_id = :user_id and book_id = :book_id")
                         .setParameter("user_id", user.getEnrollment())
@@ -182,7 +182,7 @@ public class FlowManagementPanel extends JPanel implements SearchablePanel{
                             EM.merge(usersBook);
                             EM.getTransaction().commit();
                             JOptionPane.showMessageDialog(this, "Successfully renewed");
-                            TableUtil.buildTableModelF(booksRentedTable, BookUtil.getRentBookColumns(), user);
+                            TableUtil.buildTableModelF(booksRentedTable, JPABook.getRentBookColumns(), user);
                             TableUtil.resizeColumnWidth(booksRentedTable);
                         }
                     }else{
@@ -202,7 +202,7 @@ public class FlowManagementPanel extends JPanel implements SearchablePanel{
 
         returnBook.addActionListener(e->{
             if(book!= null && user != null){
-                EntityManager EM = HibernateUtil.getManager();
+                EntityManager EM = JPAClient.getSessionManager();
                 Query q = EM.createQuery(
                         "FROM UsersBook WHERE book_id = :book_id");
                 q.setParameter("book_id", book.getIsbn());
@@ -224,7 +224,7 @@ public class FlowManagementPanel extends JPanel implements SearchablePanel{
                 EM.merge(user);
                 EM.getTransaction().commit();
                 book.setSamples(book.getSamples()+1);
-                BookUtil.update(book);
+                JPABook.update(book);
                 resultPane.setName(user.getName());
                 ((ResultPanel)resultPane).setTaxValue(user.getPenalty().toString());
                 if(cond){
@@ -237,18 +237,18 @@ public class FlowManagementPanel extends JPanel implements SearchablePanel{
                 JOptionPane.showMessageDialog(this, "No books or user selected");
             }
 
-            TableUtil.buildTableModelF(booksRentedTable, BookUtil.getRentBookColumns(), user);
+            TableUtil.buildTableModelF(booksRentedTable, JPABook.getRentBookColumns(), user);
             TableUtil.resizeColumnWidth(booksRentedTable);
             ((RegisterPanel)bookInfo).clear();
             /** Refreshes all jtables with newer data from database */
-            TableUtil.buildTableModelB(BookManagementPanel.resultsTable, BookUtil.getBookColumns());
-            TableUtil.resizeColumnWidth(BookManagementPanel.resultsTable);
+            TableUtil.buildTableModelB(ManagementBookPanel.resultsTable, JPABook.getBookColumns());
+            TableUtil.resizeColumnWidth(ManagementBookPanel.resultsTable);
             book = null;
         });
 
         scheduleBook.addActionListener(e->{
             if(user != null && book != null){
-                EntityManager EM = HibernateUtil.getManager();
+                EntityManager EM = JPAClient.getSessionManager();
                 ScheduleBook sb = new ScheduleBook();
                 sb.setUser(user);
                 sb.setBook(book);
@@ -289,7 +289,7 @@ public class FlowManagementPanel extends JPanel implements SearchablePanel{
             public void actionPerformed(ActionEvent e) {
                 if(user != null){
                     user.setPenalty(0);
-                    UserUtil.update(user);
+                    JPAUser.update(user);
                     ((ResultPanel)resultPane).setTaxValue("0");
                 }else{
                     JOptionPane.showMessageDialog(menuPane, "No books or user selected");
@@ -332,7 +332,7 @@ public class FlowManagementPanel extends JPanel implements SearchablePanel{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String stringData = SearchFlowLogic.doSearch();
+        String stringData = SearchRentLogic.doSearch();
         if(!stringData.isEmpty()){
             String[] data = stringData.split(",");
             if(data[data.length-1].equals("b")){

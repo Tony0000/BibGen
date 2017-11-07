@@ -10,7 +10,7 @@ import java.util.Vector;
 /**
  * Created by manoel on 05/05/2017.
  */
-public class BookUtil {
+public class JPABook {
 
     private static EntityManager manager;
     private static Vector<String> columns;
@@ -41,7 +41,7 @@ public class BookUtil {
     /** Updates the data of a given book in the database
      * @param book the object to be updated */
     public static void update(Book book){
-        manager = HibernateUtil.getManager();
+        manager = JPAClient.getSessionManager();
         manager.getTransaction().begin();
         manager.merge(book);
         manager.getTransaction().commit();
@@ -50,7 +50,7 @@ public class BookUtil {
     /** Inserts the data of a given book into the database
      * @param book the object to be inserted */
     public static void insert(Book book){
-        manager = HibernateUtil.getManager();
+        manager = JPAClient.getSessionManager();
         manager.getTransaction().begin();
         manager.persist(book);
         manager.getTransaction().commit();
@@ -59,7 +59,7 @@ public class BookUtil {
     /** Removes the data of a given book in the database
      * @param book the object to be updated */
     public static void remove(Book book){
-        manager = HibernateUtil.getManager();
+        manager = JPAClient.getSessionManager();
         manager.getTransaction().begin();
         manager.remove(findBy(book.getIsbn()));
         manager.getTransaction().commit();
@@ -69,7 +69,7 @@ public class BookUtil {
      * @param field the primary key of the object
      * @return the object found */
     public static Book findBy(String field){
-        manager = HibernateUtil.getManager();
+        manager = JPAClient.getSessionManager();
         return manager.find(Book.class, field);
     }
 
@@ -77,7 +77,7 @@ public class BookUtil {
      * @param condition title field of the book
      * @return list of the objects that satisfy the query */
     public static Book queryByField(String identifier, String condition){
-        EntityManager EM = HibernateUtil.getManager();
+        EntityManager EM = JPAClient.getSessionManager();
 
         Query q = EM.createNamedQuery(identifier, Book.class)
                 .setParameter("book_id", condition);

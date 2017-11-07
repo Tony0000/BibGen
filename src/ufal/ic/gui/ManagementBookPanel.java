@@ -1,7 +1,7 @@
 package ufal.ic.gui;
 
 import ufal.ic.entities.Book;
-import ufal.ic.util.BookUtil;
+import ufal.ic.util.JPABook;
 import ufal.ic.util.SearchBookLogic;
 import ufal.ic.util.SpringUtilities;
 import ufal.ic.util.TableUtil;
@@ -17,7 +17,7 @@ import java.util.Vector;
  * Book registering pane, which includes a search bar, a book updater tool, and a table of registered books
  * Created by manoel on 02/05/17.
  */
-public class BookManagementPanel extends JPanel implements SearchablePanel{
+public class ManagementBookPanel extends JPanel implements SearchablePanel {
     SearchBookLogic searchLogic;
     JPanel leftPane, rightPane, userHandlerButtons;
     RegisterPanel registerBookPane;
@@ -25,7 +25,7 @@ public class BookManagementPanel extends JPanel implements SearchablePanel{
     public static JTable resultsTable;
     Vector<Vector<String>> data;
 
-    public BookManagementPanel() {
+    public ManagementBookPanel() {
 
         /** Instantiate variables*/
         data = new Vector<>();
@@ -36,14 +36,14 @@ public class BookManagementPanel extends JPanel implements SearchablePanel{
 
 
         /** Instantiate dependent variables*/
-        registerBookPane = new RegisterPanel("books", BookUtil.getBookColumns());
+        registerBookPane = new RegisterPanel("books", JPABook.getBookColumns());
         registerBookPane.setPreferredSize(new Dimension(300,300));
         leftPane = new JPanel(new GridLayout());
-        searchLogic = new SearchBookLogic(new SearchPanel(this, BookUtil.getBookColumns(), BookUtil.SEARCHABLE_FIELDS));
+        searchLogic = new SearchBookLogic(new SearchPanel(this, JPABook.getBookColumns(), JPABook.SEARCHABLE_FIELDS));
         leftPane.add(new JScrollPane(resultsTable), BorderLayout.CENTER);
 
         /** Instantiate and setting Data Model for the table*/
-        TableUtil.buildTableModelB(resultsTable, BookUtil.getBookColumns());
+        TableUtil.buildTableModelB(resultsTable, JPABook.getBookColumns());
         TableUtil.resizeColumnWidth(resultsTable);
 
         addButton = new JButton("Insert");
@@ -70,24 +70,24 @@ public class BookManagementPanel extends JPanel implements SearchablePanel{
     public void setUpButtons(){
         addButton.addActionListener(e -> {
             Book book = registerBookPane.getFields();
-            BookUtil.insert(book);
+            JPABook.insert(book);
 //            JOptionPane.showMessageDialog(this, book.toString());
             ((DefaultTableModel)resultsTable.getModel()).fireTableDataChanged();
-            TableUtil.buildTableModelB(resultsTable, BookUtil.getBookColumns());
+            TableUtil.buildTableModelB(resultsTable, JPABook.getBookColumns());
             TableUtil.resizeColumnWidth(resultsTable);
         });
 
         updateButton.addActionListener(e -> {
             Book book = registerBookPane.getFields();
-            BookUtil.update(book);
-            TableUtil.buildTableModelB(resultsTable, BookUtil.getBookColumns());
+            JPABook.update(book);
+            TableUtil.buildTableModelB(resultsTable, JPABook.getBookColumns());
             TableUtil.resizeColumnWidth(resultsTable);
         });
 
         removeButton.addActionListener(e -> {
             Book book = registerBookPane.getFields();
-            BookUtil.remove(book);
-            TableUtil.buildTableModelB(resultsTable, BookUtil.getBookColumns());
+            JPABook.remove(book);
+            TableUtil.buildTableModelB(resultsTable, JPABook.getBookColumns());
             TableUtil.resizeColumnWidth(resultsTable);
         });
     }

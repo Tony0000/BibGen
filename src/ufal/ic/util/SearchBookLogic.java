@@ -21,13 +21,13 @@ public class SearchBookLogic {
         if(field != null){
             switch (field) {
                 case "ISBN":
-                    b = BookUtil.findBy(panel.inputText.getText());
+                    b = JPABook.findBy(panel.inputText.getText());
                     break;
                 case "Title":
-                    b = BookUtil.queryByField(panel.listOfFields.get(1).toLowerCase(), panel.inputText.getText());
+                    b = JPABook.queryByField(panel.listOfFields.get(1).toLowerCase(), panel.inputText.getText());
                     break;
                 case "Author":
-                    b = BookUtil.queryByField(panel.listOfFields.get(2).toLowerCase(), panel.inputText.getText());
+                    b = JPABook.queryByField(panel.listOfFields.get(2).toLowerCase(), panel.inputText.getText());
                     break;
             }
             panel.inputText.setText("");

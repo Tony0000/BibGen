@@ -11,7 +11,7 @@ import java.util.Vector;
  * Class which handles commands such as insert, update, remove, find to the hibernate connection.
  * Created by manoel on 05/05/2017.
  */
-public class UserUtil {
+public class JPAUser {
 
     private static EntityManager manager;
     private static Vector<String> userColumns;
@@ -30,7 +30,7 @@ public class UserUtil {
     /** Updates the data of a given user in the database
      * @param user the object to be updated */
     public static void update(User user){
-        manager = HibernateUtil.getManager();
+        manager = JPAClient.getSessionManager();
         manager.getTransaction().begin();
         manager.merge(user);
         manager.getTransaction().commit();
@@ -39,7 +39,7 @@ public class UserUtil {
     /** Inserts the data of a given user into the database
      * @param user the object to be inserted */
     public static void insert(User user){
-        manager = HibernateUtil.getManager();
+        manager = JPAClient.getSessionManager();
         manager.getTransaction().begin();
         manager.persist(user);
         manager.getTransaction().commit();
@@ -48,7 +48,7 @@ public class UserUtil {
     /** Removes the data of a given user in the database
      * @param user the object to be removed */
     public static void remove(User user){
-        manager = HibernateUtil.getManager();
+        manager = JPAClient.getSessionManager();
         manager.getTransaction().begin();
         manager.remove(findBy(user.getEnrollment()));
         manager.getTransaction().commit();
@@ -58,12 +58,12 @@ public class UserUtil {
      * @param field the primary key of the object
      * @return the object found */
     public static User findBy(String field){
-        manager = HibernateUtil.getManager();
+        manager = JPAClient.getSessionManager();
         return manager.find(User.class, field);
     }
 
     public static User queryByField(String identifier, String condition){
-        EntityManager EM = HibernateUtil.getManager();
+        EntityManager EM = JPAClient.getSessionManager();
 
         Query q = EM.createNamedQuery(identifier, User.class)
                 .setParameter("user_id", condition);

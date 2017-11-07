@@ -8,7 +8,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 /** Helper class in which provides the EntityManager to handle the hibernate connection to your database*/
-public class HibernateUtil {
+public class JPAClient {
 
     private static final EntityManager manager = buildSessionFactory();
 
@@ -20,7 +20,7 @@ public class HibernateUtil {
 
     /** Session handler for hibernate commands
      * @return an EntityManager from which you can grab the session */
-    public static EntityManager getManager() {
+    public static EntityManager getSessionManager() {
         return manager;
     }
 }

@@ -7,14 +7,13 @@ import com.itextpdf.text.pdf.PdfWriter;
 import ufal.ic.entities.Book;
 import ufal.ic.entities.User;
 import ufal.ic.entities.UsersBook;
-import ufal.ic.util.HibernateUtil;
+import ufal.ic.util.JPAClient;
 import ufal.ic.util.TableUtil;
 
 import javax.imageio.ImageIO;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -32,14 +31,14 @@ import java.util.Vector;
 /**
  * Created by manoel on 05/05/2017.
  */
-public class ReportManagementPanel extends JPanel{
+public class ManagementReportPanel extends JPanel {
 
     JLabel qtUsers, userWithPenaltys, qtRentedBooks, qtBooks, amtFine;
     public static JTable usersDebtors;
     private static Vector<String> columns;
     JSplitPane majorSplit;
 
-    public ReportManagementPanel() {
+    public ManagementReportPanel() {
 
         setLayout(new BorderLayout());
         Date date = Calendar.getInstance().getTime();
@@ -117,7 +116,7 @@ public class ReportManagementPanel extends JPanel{
 
     public void showData(){
 
-        EntityManager EM = HibernateUtil.getManager();
+        EntityManager EM = JPAClient.getSessionManager();
         Query queryQtUsers = EM.createQuery(
                 "FROM User");
         List<User> allUsers = queryQtUsers.getResultList();

@@ -4,7 +4,7 @@ import ufal.ic.entities.User;
 import ufal.ic.util.SearchUserLogic;
 import ufal.ic.util.SpringUtilities;
 import ufal.ic.util.TableUtil;
-import ufal.ic.util.UserUtil;
+import ufal.ic.util.JPAUser;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -15,7 +15,7 @@ import java.util.Vector;
 /** User registering pane, which includes a search bar, an user updater tool, and a table of registered users
  * Created by manoel on 02/05/2017.
  */
-public class UserManagementPanel extends JPanel implements SearchablePanel{
+public class ManagementUserPanel extends JPanel implements SearchablePanel {
 
     JPanel leftPane, rightPane, userHandlerButtons;
     SearchUserLogic searchLogic;
@@ -24,7 +24,7 @@ public class UserManagementPanel extends JPanel implements SearchablePanel{
     JTable resultsTable;
     Vector< Vector<String> > data;
 
-    public UserManagementPanel() {
+    public ManagementUserPanel() {
 
         /** Instantiate variables*/
         data = new Vector<>();
@@ -35,14 +35,14 @@ public class UserManagementPanel extends JPanel implements SearchablePanel{
 
 
         /** Instantiate dependent variables*/
-        registerUserPane = new RegisterPanel("user", UserUtil.getColumns());
+        registerUserPane = new RegisterPanel("user", JPAUser.getColumns());
         registerUserPane.setPreferredSize(new Dimension(300,300));
         leftPane = new JPanel(new GridLayout());
-        searchLogic = new SearchUserLogic(new SearchPanel(this, UserUtil.getColumns(), UserUtil.SEARCHABLE_FIELDS));
+        searchLogic = new SearchUserLogic(new SearchPanel(this, JPAUser.getColumns(), JPAUser.SEARCHABLE_FIELDS));
         leftPane.add(new JScrollPane(resultsTable), BorderLayout.CENTER);
 
         /** Instantiate and setting Data Model for the table*/
-        TableUtil.buildTableModelU(resultsTable, UserUtil.getColumns());
+        TableUtil.buildTableModelU(resultsTable, JPAUser.getColumns());
         TableUtil.resizeColumnWidth(resultsTable);
 
         addButton = new JButton("Insert");
@@ -70,22 +70,22 @@ public class UserManagementPanel extends JPanel implements SearchablePanel{
     public void setUpButtons(){
         addButton.addActionListener(e -> {
             User user = registerUserPane.getFields();
-            UserUtil.insert(user);
-            TableUtil.buildTableModelU(resultsTable, UserUtil.getColumns());
+            JPAUser.insert(user);
+            TableUtil.buildTableModelU(resultsTable, JPAUser.getColumns());
             TableUtil.resizeColumnWidth(resultsTable);
         });
 
         updateButton.addActionListener(e -> {
             User user = registerUserPane.getFields();
-            UserUtil.update(user);
-            TableUtil.buildTableModelU(resultsTable, UserUtil.getColumns());
+            JPAUser.update(user);
+            TableUtil.buildTableModelU(resultsTable, JPAUser.getColumns());
             TableUtil.resizeColumnWidth(resultsTable);
         });
 
         removeButton.addActionListener(e -> {
             User user = registerUserPane.getFields();
-            UserUtil.remove(user);
-            TableUtil.buildTableModelU(resultsTable, UserUtil.getColumns());
+            JPAUser.remove(user);
+            TableUtil.buildTableModelU(resultsTable, JPAUser.getColumns());
             TableUtil.resizeColumnWidth(resultsTable);
         });
     }

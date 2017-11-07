@@ -13,20 +13,20 @@ import java.io.IOException;
  * users, books, books operations and generating reports
  * Created by manoel on 30/04/2017.
  */
-public class LibrarianPanel extends JPanel{
+public class MainPanel extends JPanel{
 
     final static String[] TAGS = {"USERS", "BOOKS", "FLOW", "REPORT"};
     private JPanel reference, tabs;
 
-    public LibrarianPanel(){
+    public MainPanel(){
         JPanel booksTab, usersTab, reportsTab, flowTab;
         JPanel menuPanel;
 
         setLayout(new GridBagLayout());
-        booksTab = new BookManagementPanel();
-        usersTab = new UserManagementPanel();
-        reportsTab = new ReportManagementPanel();
-        flowTab = new FlowManagementPanel();
+        booksTab = new ManagementBookPanel();
+        usersTab = new ManagementUserPanel();
+        reportsTab = new ManagementReportPanel();
+        flowTab = new ManagementRentPanel();
         tabs = new JPanel(new CardLayout());
 
         tabs.add(usersTab, TAGS[0]);

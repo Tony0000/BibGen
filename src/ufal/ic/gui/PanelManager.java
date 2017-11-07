@@ -42,17 +42,17 @@ public class PanelManager{
         };
         LoginPanel loginPanel = new LoginPanel();
 
-        LibrarianPanel librarianPanel = new LibrarianPanel();
+        MainPanel mainPanel = new MainPanel();
         loginOuterPanel.add(loginPanel);
 
 
         /**Create the panel that contain the cards*/
         cards = new JPanel(new CardLayout());
         cards.add(loginOuterPanel, LOGINPANEL);
-        cards.add(librarianPanel, MAINSCREEN);
+        cards.add(mainPanel, MAINSCREEN);
 
         loginPanel.addButtonListener(cards);
-        librarianPanel.addButtonListener(cards);
+        mainPanel.addButtonListener(cards);
         pane.add(cards, BorderLayout.CENTER);
     }
 }

@@ -4,9 +4,9 @@ import ufal.ic.entities.Book;
 import ufal.ic.entities.User;
 import ufal.ic.gui.SearchPanel;
 
-import static ufal.ic.gui.FlowManagementPanel.booksRentedTable;
+import static ufal.ic.gui.ManagementRentPanel.booksRentedTable;
 
-public class SearchFlowLogic {
+public class SearchRentLogic {
 
     static SearchPanel panel;
 
@@ -33,8 +33,8 @@ public class SearchFlowLogic {
 
     /** Search operation logic */
     public static String searchUser() {
-        User user = UserUtil.findBy(panel.inputText.getText());
-        TableUtil.buildTableModelF(booksRentedTable, BookUtil.getRentBookColumns(), user);
+        User user = JPAUser.findBy(panel.inputText.getText());
+        TableUtil.buildTableModelF(booksRentedTable, JPABook.getRentBookColumns(), user);
         TableUtil.resizeColumnWidth(booksRentedTable);
         panel.inputText.setText("");
         return user.toString()+",u";
@@ -42,7 +42,7 @@ public class SearchFlowLogic {
 
     /** Search operation logic */
     public static String searchBook() {
-        Book book = BookUtil.findBy(panel.inputText.getText());
+        Book book = JPABook.findBy(panel.inputText.getText());
         panel.inputText.setText("");
         return book.toString()+",b";
     }

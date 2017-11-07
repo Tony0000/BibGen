@@ -1,7 +1,7 @@
 package ufal.ic.gui;
 
 import ufal.ic.entities.Librarian;
-import ufal.ic.util.LibrarianUtil;
+import ufal.ic.util.JPALibrarian;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -44,7 +44,7 @@ public class LoginPanel extends JPanel {
     /** Checks if the inputted login and password has a correspondent in the database */
     private void tryLogin() {
         if(!userInput.getText().isEmpty() && passInput.getPassword().length > 0){
-            Librarian login = LibrarianUtil.findBy(userInput.getText());
+            Librarian login = JPALibrarian.findBy(userInput.getText());
             if(login != null) {
                 System.out.println(passInput.getPassword());
                 if (login.getSenha().equals(String.valueOf(passInput.getPassword()))) {

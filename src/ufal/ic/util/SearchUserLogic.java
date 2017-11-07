@@ -21,13 +21,13 @@ public class SearchUserLogic {
         if(field != null){
             switch (field) {
                 case "Enrollment":
-                    u = UserUtil.findBy(panel.inputText.getText());
+                    u = JPAUser.findBy(panel.inputText.getText());
                     break;
                 case "Name":
-                    u = UserUtil.queryByField(panel.listOfFields.get(1).toLowerCase(), panel.inputText.getText());
+                    u = JPAUser.queryByField(panel.listOfFields.get(1).toLowerCase(), panel.inputText.getText());
                     break;
                 case "Email":
-                    u = UserUtil.queryByField(panel.listOfFields.get(2).toLowerCase(), panel.inputText.getText());
+                    u = JPAUser.queryByField(panel.listOfFields.get(2).toLowerCase(), panel.inputText.getText());
                     break;
             }
             panel.inputText.setText("");
