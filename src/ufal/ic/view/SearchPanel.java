@@ -1,4 +1,4 @@
-package ufal.ic.gui;
+package ufal.ic.view;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -9,11 +9,11 @@ import java.util.Vector;
 public class SearchPanel extends JPanel{
 
     private JRadioButton[] radioButtons;
-    public  JTextField inputText;
-    public  ButtonGroup buttonGroup;
+    private  JTextField inputText;
+    private  ButtonGroup buttonGroup;
     private JPanel radioPanel;
     private JButton confirm;
-    public  Vector<String> listOfFields;
+    private  Vector<String> listOfFields;
 
     public SearchPanel(SearchablePanel parentPanel, Vector<String> items, int n) {
         /**Variables instantiation*/
@@ -38,6 +38,7 @@ public class SearchPanel extends JPanel{
         inputText = new JTextField();
         inputText.addActionListener(parentPanel);
         confirm = new JButton("Confirm");
+        confirm.setBackground(Color.RED);
         confirm.setAlignmentX(JButton.CENTER_ALIGNMENT);
         confirm.addActionListener(parentPanel);
 
@@ -49,5 +50,21 @@ public class SearchPanel extends JPanel{
         add(new Box.Filler(minSize, prefSize, prefSize));
         add(confirm);
         add(new Box.Filler(maxSize, maxSize, maxSize));
+    }
+
+    public String getText(){
+        return inputText.getText();
+    }
+
+    public void setText(String value){
+        inputText.setText("");
+    }
+
+    public String getField(int index){
+        return listOfFields.get(index).toLowerCase();
+    }
+
+    public ButtonGroup getRadioGroup(){
+        return buttonGroup;
     }
 }

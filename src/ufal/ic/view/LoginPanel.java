@@ -1,7 +1,7 @@
-package ufal.ic.gui;
+package ufal.ic.view;
 
-import ufal.ic.entities.Librarian;
-import ufal.ic.util.JPALibrarian;
+import ufal.ic.model.Librarian;
+import ufal.ic.control.JPALibrarian;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;

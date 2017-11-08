@@ -1,14 +1,14 @@
-package ufal.ic.gui;
+package ufal.ic.view;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.PdfWriter;
-import ufal.ic.entities.Book;
-import ufal.ic.entities.User;
-import ufal.ic.entities.UsersBook;
-import ufal.ic.util.JPAClient;
-import ufal.ic.util.TableUtil;
+import ufal.ic.model.Book;
+import ufal.ic.model.User;
+import ufal.ic.model.UsersBook;
+import ufal.ic.control.JPAClient;
+import ufal.ic.control.TableUtil;
 
 import javax.imageio.ImageIO;
 import javax.persistence.EntityManager;

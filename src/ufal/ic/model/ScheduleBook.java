@@ -1,28 +1,26 @@
-package ufal.ic.entities;
+package ufal.ic.model;
 
 import javax.persistence.*;
 import java.util.Date;
 
 /**
- * Created by Maximus on 06/05/2017.
+ * Created by Maximus on 07/05/2017.
  */
 @Entity
-@Table(name = "USERS_BOOKS")
-public class UsersBook {
+@Table(name = "SCHEDULE_BOOK")
+public class ScheduleBook {
+
+    public ScheduleBook(){ }
 
     private long id;
     private User user;
     private Book book;
 
-    // additional fields
-    private Date dataLocacao;
-    private Date dataEntrega;
-
-    public UsersBook(){  }
+    private Date dataReserva;
 
     @Id
     @GeneratedValue
-    @Column(name = "USER_BOOK_ID")
+    @Column(name = "USER_BOOK__SCHEDULE_ID")
     public long getId() {
         return id;
     }
@@ -51,23 +49,13 @@ public class UsersBook {
         this.book = book;
     }
 
-    public Date getDataLocacao() {
-        return dataLocacao;
+    public Date getDataReserva() {
+        return dataReserva;
     }
 
-    public void setDataLocacao(Date dataLocacao) {
-        this.dataLocacao = dataLocacao;
+    public void setDataReserva(Date dataReserva) {
+        this.dataReserva = dataReserva;
     }
-
-
-    public Date getDataEntrega() {
-        return dataEntrega;
-    }
-
-    public void setDataEntrega(Date dataEntrega) {
-        this.dataEntrega = dataEntrega;
-    }
-
 
 
 }

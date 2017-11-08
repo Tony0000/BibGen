@@ -1,6 +1,6 @@
-package ufal.ic.util;
+package ufal.ic.control;
 
-import ufal.ic.entities.Librarian;
+import ufal.ic.model.Librarian;
 
 import javax.persistence.EntityManager;
 

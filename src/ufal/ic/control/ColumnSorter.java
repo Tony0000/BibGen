@@ -1,4 +1,4 @@
-package ufal.ic.util;
+package ufal.ic.control;
 
 import java.util.Comparator;
 import java.util.Vector;

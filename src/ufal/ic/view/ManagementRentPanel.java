@@ -1,7 +1,7 @@
-package ufal.ic.gui;
+package ufal.ic.view;
 
-import ufal.ic.entities.*;
-import ufal.ic.util.*;
+import ufal.ic.model.*;
+import ufal.ic.control.*;
 
 import javax.imageio.ImageIO;
 import javax.persistence.EntityManager;
@@ -18,10 +18,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
-import ufal.ic.entities.Book;
-import ufal.ic.entities.User;
-import ufal.ic.util.JPABook;
-import ufal.ic.util.SearchRentLogic;
+import ufal.ic.model.Book;
+import ufal.ic.model.User;
+import ufal.ic.control.JPABook;
+import ufal.ic.control.SearchRentLogic;
 
 /**
  * Flow Pane of rented, returned, overdue and scheduled books information of a given user
@@ -30,18 +30,19 @@ import ufal.ic.util.SearchRentLogic;
  * Created by manoel on 02/05/2017.
  */
 public class ManagementRentPanel extends JPanel implements SearchablePanel {
-    JButton rentBook, renewBook, returnBook, scheduleBook, payPenalty;
-    JPanel menuPane, tablePane, bookInfo, resultPane, upperPane;
-    SearchRentLogic searchLogic;
+    private JButton rentBook, renewBook, returnBook, scheduleBook, payPenalty;
+    private JPanel menuPane, tablePane, resultPane, upperPane;
+    private SearchRentLogic searchLogic;
+    private FormLogic formLogic;
     public static JTable booksRentedTable;
-    User user;
-    Book book;
+    private User user;
+    private Book book;
 
     public ManagementRentPanel(){
 
         setLayout(new BorderLayout());
 
-        bookInfo = new RegisterPanel(JPABook.getBookColumns());
+        formLogic = new FormLogic(new FormPanel("Rent book: ", JPABook.getBookColumns(), false));
         Vector<String> fields = new Vector<>();
         fields.add("enrollment");
         fields.add("ISBN");
@@ -86,7 +87,7 @@ public class ManagementRentPanel extends JPanel implements SearchablePanel {
         upperPane.add(resultPane);
         upperPane.add(menuPane);
 
-        JSplitPane bottomSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tablePane, bookInfo);
+        JSplitPane bottomSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tablePane, formLogic.getPanel());
         bottomSplit.setBorder(BorderFactory.createEmptyBorder(2,20,20,20));
         bottomSplit.setResizeWeight(0.7);
         bottomSplit.setOneTouchExpandable(false);
@@ -106,7 +107,7 @@ public class ManagementRentPanel extends JPanel implements SearchablePanel {
                 // Checa se há livro disponivel
                 if(book.getSamples() > 0) {
                     if(user.getPenalty() < 15){
-                        // Decrementa a quantidade de livros disponveis
+                        // Decrementa a quantidade de livros disponiveis
                         book.setSamples(book.getSamples() - 1);
 
                         // Atribui a relacao de usuario e livro
@@ -149,7 +150,7 @@ public class ManagementRentPanel extends JPanel implements SearchablePanel {
             }
             TableUtil.buildTableModelF(booksRentedTable, JPABook.getRentBookColumns(), user);
             TableUtil.resizeColumnWidth(booksRentedTable);
-            ((RegisterPanel)bookInfo).clear();
+            formLogic.clear();
             /** Refreshes all jtables with newer data from database */
             TableUtil.buildTableModelB(ManagementBookPanel.resultsTable, JPABook.getRentBookColumns());
             TableUtil.resizeColumnWidth(ManagementBookPanel.resultsTable);
@@ -239,7 +240,7 @@ public class ManagementRentPanel extends JPanel implements SearchablePanel {
 
             TableUtil.buildTableModelF(booksRentedTable, JPABook.getRentBookColumns(), user);
             TableUtil.resizeColumnWidth(booksRentedTable);
-            ((RegisterPanel)bookInfo).clear();
+            formLogic.clear();
             /** Refreshes all jtables with newer data from database */
             TableUtil.buildTableModelB(ManagementBookPanel.resultsTable, JPABook.getBookColumns());
             TableUtil.resizeColumnWidth(ManagementBookPanel.resultsTable);
@@ -284,21 +285,18 @@ public class ManagementRentPanel extends JPanel implements SearchablePanel {
 
         });
 
-        payPenalty.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(user != null){
-                    user.setPenalty(0);
-                    JPAUser.update(user);
-                    ((ResultPanel)resultPane).setTaxValue("0");
-                }else{
-                    JOptionPane.showMessageDialog(menuPane, "No books or user selected");
-                }
+        payPenalty.addActionListener(e -> {
+            if(user != null){
+                user.setPenalty(0);
+                JPAUser.update(user);
+                ((ResultPanel)resultPane).setTaxValue("0");
+            }else{
+                JOptionPane.showMessageDialog(menuPane, "No books or user selected");
             }
         });
     }
 
-    /** Given an input image it will scale it down and set it as an icon for a jbutton
+    /** Given an input image it will scale it down and set it as an icon for a JButton
      * @param imgName image path
      * @return an instance of a button
      * */
@@ -332,18 +330,15 @@ public class ManagementRentPanel extends JPanel implements SearchablePanel {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String stringData = SearchRentLogic.doSearch();
-        if(!stringData.isEmpty()){
-            String[] data = stringData.split(",");
-            if(data[data.length-1].equals("b")){
-                book = new Book(data[0],data[1],data[2], data[3], Integer.valueOf(data[4]));
-                ((RegisterPanel)bookInfo).fillMe(book);
-            }else if(data[data.length-1].equals("u")){
-                user = new User(data[0],data[1],data[2],data[3]);
-                resultPane.setName(user.getName());
-                ((ResultPanel)resultPane).setTaxValue(user.getPenalty().toString());
-            }
 
+        String field = GroupButtonUtil.getSelectedButtonText(searchLogic.getSearchPanel().getRadioGroup());
+        if (field.equals("enrollment")) {
+            user = searchLogic.searchUser();
+            resultPane.setName(user.getName());
+            ((ResultPanel)resultPane).setTaxValue(user.getPenalty().toString());
+        } else if (field.equals("ISBN")) {
+            book = searchLogic.searchBook();
+            formLogic.fill(book.getInfo());
         }
     }
 
@@ -375,55 +370,5 @@ public class ManagementRentPanel extends JPanel implements SearchablePanel {
             taxValue.setText("Fine: R$ "+tax);
         }
 
-    }
-
-    /** Sets up the register pane*/
-    private class RegisterPanel extends JPanel {
-
-        public RegisterPanel(Vector<String> field) {
-
-            setBorder(new TitledBorder("Rent book: "));
-            //Create and populate the panel.
-            setLayout(new SpringLayout());
-            for (int i = 0; i < field.size(); i++) {
-                JLabel l = new JLabel(field.get(i), JLabel.TRAILING);
-                add(l);
-                JTextField textField = new JTextField();
-                textField.setPreferredSize(new Dimension(200,30));
-                textField.setMaximumSize(new Dimension(200,30));
-                textField.setEnabled(false);
-                l.setLabelFor(textField);
-                add(textField);
-            }
-
-            SpringUtilities.makeCompactGrid(this,
-                    field.size(), 2, //rows, cols
-                    4, 4,        //initX, initY
-                    4, 4);       //xPad, yPad
-        }
-
-        public void fillMe(Book book){
-            String[] bookFields = book.getInfo();
-
-            int i = 0;
-            Component[] components = getComponents();
-            for(Component c : components){
-                if(c instanceof JTextField){
-                    JTextField tmp =((JTextField) c);
-                    tmp.setText(bookFields[i]);
-                    i++;
-                }
-            }
-        }
-
-        public void clear(){
-            Component[] components = getComponents();
-            for(Component c : components){
-                if(c instanceof JTextField){
-                    JTextField tmp =((JTextField) c);
-                    tmp.setText("");
-                }
-            }
-        }
     }
 }

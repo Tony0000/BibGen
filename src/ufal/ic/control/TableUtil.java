@@ -1,8 +1,8 @@
-package ufal.ic.util;
+package ufal.ic.control;
 
-import ufal.ic.entities.Book;
-import ufal.ic.entities.User;
-import ufal.ic.entities.UsersBook;
+import ufal.ic.model.Book;
+import ufal.ic.model.User;
+import ufal.ic.model.UsersBook;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;

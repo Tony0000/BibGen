@@ -1,4 +1,4 @@
-package ufal.ic.gui;
+package ufal.ic.view;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -15,23 +15,23 @@ import java.io.IOException;
  */
 public class MainPanel extends JPanel{
 
-    final static String[] TAGS = {"USERS", "BOOKS", "FLOW", "REPORT"};
+    final static String[] TAGS = {"USERS", "BOOKS", "RENT", "REPORT"};
     private JPanel reference, tabs;
 
     public MainPanel(){
-        JPanel booksTab, usersTab, reportsTab, flowTab;
+        JPanel booksTab, usersTab, reportsTab, rentTab;
         JPanel menuPanel;
 
         setLayout(new GridBagLayout());
         booksTab = new ManagementBookPanel();
         usersTab = new ManagementUserPanel();
         reportsTab = new ManagementReportPanel();
-        flowTab = new ManagementRentPanel();
+        rentTab = new ManagementRentPanel();
         tabs = new JPanel(new CardLayout());
 
         tabs.add(usersTab, TAGS[0]);
         tabs.add(booksTab, TAGS[1]);
-        tabs.add(flowTab, TAGS[2]);
+        tabs.add(rentTab, TAGS[2]);
         tabs.add(reportsTab, TAGS[3]);
 
         GridBagConstraints c = new GridBagConstraints();

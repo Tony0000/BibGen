@@ -1,4 +1,4 @@
-package ufal.ic.gui;
+package ufal.ic.view;
 
 import java.awt.event.ActionListener;
 

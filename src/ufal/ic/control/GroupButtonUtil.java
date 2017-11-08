@@ -1,4 +1,4 @@
-package ufal.ic.util;
+package ufal.ic.control;
 
 import javax.swing.*;
 import java.util.Enumeration;

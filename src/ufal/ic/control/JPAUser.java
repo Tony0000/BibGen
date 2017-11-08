@@ -1,6 +1,6 @@
-package ufal.ic.util;
+package ufal.ic.control;
 
-import ufal.ic.entities.User;
+import ufal.ic.model.User;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -18,7 +18,7 @@ public class JPAUser {
     public static final int SEARCHABLE_FIELDS = 3;
 
     /** Creates an vector with users header and returns the vector */
-    public static Vector<String> getColumns(){
+    public static Vector<String> getUserColumns(){
         userColumns = new Vector<>();
         userColumns.add("Enrollment");
         userColumns.add("Name");

@@ -1,4 +1,4 @@
-package ufal.ic.gui;
+package ufal.ic.view;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

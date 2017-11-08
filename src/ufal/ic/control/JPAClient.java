@@ -1,4 +1,4 @@
-package ufal.ic.util;
+package ufal.ic.control;
 
 /**
  * Created by manoel on 04/05/2017.

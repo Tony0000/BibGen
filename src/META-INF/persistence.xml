@@ -10,9 +10,9 @@
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
         <!-- entidade mapeada -->
-        <class>ufal.ic.entities.Book</class>
-        <class>ufal.ic.entities.User</class>
-        <class>ufal.ic.entities.Librarian</class>
+        <class>ufal.ic.model.Book</class>
+        <class>ufal.ic.model.User</class>
+        <class>ufal.ic.model.Librarian</class>
 
         <properties>
             <!-- dados da conexao -->

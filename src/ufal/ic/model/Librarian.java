@@ -1,4 +1,4 @@
-package ufal.ic.entities;
+package ufal.ic.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
