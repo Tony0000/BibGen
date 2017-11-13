@@ -19,11 +19,11 @@
             <property name="javax.persistence.jdbc.driver"
                       value="com.mysql.jdbc.Driver" />
             <property name="javax.persistence.jdbc.url"
-                      value="jdbc:mysql://localhost:3308/bibgendb?createDatabaseIfNotExist=true" />
+                      value="jdbc:mysql://localhost:MYSQL-PORT/bibgendb?createDatabaseIfNotExist=true" />
             <property name="javax.persistence.jdbc.user"
-                      value="root" />
+                      value="MYSQL-USER" />
             <property name="javax.persistence.jdbc.password"
-                      value="root" />
+                      value="MYSQL-PASSWORD" />
 
             <!--  propriedades do hibernate -->
             <property name="hibernate.dialect"

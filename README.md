@@ -14,6 +14,9 @@
    The goal of this project is to obtain grades in Software Development Process' class.
     
 ## Requirements
+All the required libs are present in the lib folder, add them in the classpath.
+ If you'd rather have them added as dependency add the following in your pom.xml,
+  however the oxyde theme still needs to be added to your classpath.
 ```xml
 <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-entitymanager -->
 <dependency>
@@ -41,26 +44,21 @@
 </dependency>
 ```
 
-And also Oxyde theme.
+## Compile and run
+This application is completely dependent of a data source (MySQL), therefore be sure
+the MySQL service is up and running.
 
-## Packages
-* Entities
+In the persistence.xml you will have to fill the values for MYSQL-PORT, MYSQL-USER,
+MYSQL-PASSWORD, in the lines 22, 24 and 26 respectively. (default MySQL port is 3308).
 
-    
-    * Book
-    * User
-    * Librarian
-    * UsersBook
-    * ScheduleBook
-    
-* GUI 
-    
-   
-    * Main Window - JFrame and the main method
-    * Panel Manager - The handler of the Login and Application JPanels
-    * Librarian Panel - JPanel which handles all subpanels after the login
-    * Many subpanels
-    
-* Util
+After all the minimum required configuration, you can execute the code in the IDE of 
+your choice. The application entry-point is the MainWindow class.
 
-    The utilities for entities and components such as: users, books, tables, columns and hibernate connection.
+The application will generate all required tables automatically, however no entries
+will be inserted by default. As such, after the first run you must manually go to MySQL
+command line and insert a entry in the librarian panel.
+
+```mysql
+use bibgendb;
+INSERT INTO librarian values ("admin", "admin");
+```
